@@ -1790,6 +1790,146 @@ function toggleMusic(){
 })();
 </script>
 
+(function() {
+  // Thay 2 link ảnh PNG nền trong suốt của mày vào đây
+  const CHIBI_WALK = 'chibibo.png'; 
+  const CHIBI_CRY = 'chibikhoc.png'; 
+
+  let chibi = null;
+  let moveTimer = null;
+
+  function spawnChibi() {
+    // Nếu đã có chibi rồi thì xóa cũ tạo mới
+    if (chibi) chibi.remove();
+
+    chibi = document.createElement('div');
+    chibi.className = 'crawling-chibi-pet';
+    chibi.style.backgroundImage = `url('${CHIBI_WALK}')`;
+    document.body.appendChild(chibi);
+
+    startCrawlingCycle();
+  }
+
+  function startCrawlingCycle() {
+    const size = 90; // Kích thước chibi (px)
+    const edges = ['top', 'bottom', 'left', 'right'];
+    const startEdge = edges[Math.floor(Math.random() * edges.length)];
+
+    let startX = 0, startY = 0;
+
+    // Xác định vị trí xuất phát ở mép ngoài màn hình
+    if (startEdge === 'top') {
+      startX = Math.random() * (window.innerWidth - size);
+      startY = -size;
+    } else if (startEdge === 'bottom') {
+      startX = Math.random() * (window.innerWidth - size);
+      startY = window.innerHeight;
+    } else if (startEdge === 'left') {
+      startX = -size;
+      startY = Math.random() * (window.innerHeight - size);
+    } else { // right
+      startX = window.innerWidth;
+      startY = Math.random() * (window.innerHeight - size);
+    }
+
+    // Đặt vị trí ban đầu
+    chibi.style.left = startX + 'px';
+    chibi.style.top = startY + 'px';
+    chibi.style.opacity = '1';
+    chibi.style.transform = 'scale(1) rotate(0deg)';
+
+    // Chọn điểm bò tới bên trong màn hình (gần mép)
+    const targetX = Math.max(20, Math.min(window.innerWidth - size - 20, startX + (Math.random() * 300 - 150)));
+    const targetY = Math.max(20, Math.min(window.innerHeight - size - 20, startY + (Math.random() * 300 - 150)));
+
+    // Quay mặt theo hướng bò (Trái / Phải)
+    const scaleX = targetX < startX ? -1 : 1;
+
+    // Bắt đầu bò vào
+    const duration = Math.random() * 1500 + 2000; // Thời gian bò 2s - 3.5s
+    
+    chibi.animate([
+      { transform: `scaleX(${scaleX}) rotate(0deg)` },
+      { transform: `scaleX(${scaleX}) rotate(5deg)` },
+      { transform: `scaleX(${scaleX}) rotate(-5deg)` },
+      { transform: `scaleX(${scaleX}) rotate(0deg)` }
+    ], { duration: 400, iterations: Infinity });
+
+    const moveAnim = chibi.animate([
+      { left: startX + 'px', top: startY + 'px' },
+      { left: targetX + 'px', top: targetY + 'px' }
+    ], { duration: duration, fill: 'forwards', easing: 'ease-out' });
+
+    moveAnim.onfinish = () => {
+      // Bò tới nơi -> Cập nhật vị trí thực
+      chibi.style.left = targetX + 'px';
+      chibi.style.top = targetY + 'px';
+
+      // 30% Tỉ lệ bị trượt té
+      if (Math.random() < 0.3) {
+        triggerTripAndDisappear();
+      } else {
+        // Nếu không té thì đứng nghỉ 1.5s rồi biến mất, 5s sau xuất hiện lại
+        moveTimer = setTimeout(() => {
+          vanishAndRespawn();
+        }, 1500);
+      }
+    };
+  }
+
+  // Hiệu ứng Trượt té -> Khóc -> Bụp biến mất
+  function triggerTripAndDisappear() {
+    // Đổi sang ảnh khóc
+    chibi.style.backgroundImage = `url('${CHIBI_CRY}')`;
+
+    // Animate trượt té ngửa
+    chibi.animate([
+      { transform: 'rotate(0deg)' },
+      { transform: 'rotate(80deg) translateY(10px)' }
+    ], { duration: 400, fill: 'forwards', easing: 'ease-in' }).onfinish = () => {
+      
+      // Khóc 1 giây rồi mờ dần (bụp biến mất)
+      setTimeout(() => {
+        chibi.animate([
+          { opacity: 1, transform: 'scale(1) rotate(80deg)' },
+          { opacity: 0, transform: 'scale(0.3) rotate(80deg)' }
+        ], { duration: 600, fill: 'forwards' }).onfinish = () => {
+          
+          // 5 giây sau hồi sinh lại ở rìa ngẫu nhiên
+          setTimeout(spawnChibi, 5000);
+        };
+      }, 1000);
+    };
+  }
+
+  function vanishAndRespawn() {
+    chibi.animate([
+      { opacity: 1, transform: 'scale(1)' },
+      { opacity: 0, transform: 'scale(0.5)' }
+    ], { duration: 500, fill: 'forwards' }).onfinish = () => {
+      setTimeout(spawnChibi, 5000);
+    };
+  }
+
+  // Chạy lần đầu
+  window.addEventListener('DOMContentLoaded', spawnChibi);
+})();
+</script>
+
+<style>
+  .crawling-chibi-pet {
+    position: fixed;
+    width: 90px;
+    height: 90px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 2147483646;
+    pointer-events: none; /* Tránh cản trở click trên web */
+    filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.2));
+  }
+</style>
+    
     
 </body>
 
