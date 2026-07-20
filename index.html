@@ -1705,7 +1705,91 @@ function toggleMusic(){
 })();
 </script>
 
- 
+ <!-- Con gấu Panda tự dạo chơi -->
+<div id="pandaPet" title="Nhấp đúp để giỡn với Panda!">🐼</div>
+
+<style>
+  #pandaPet {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 38px;
+    line-height: 1;
+    z-index: 2147483646 !important; /* Dưới bụi vàng 1 lớp, trên mọi thứ khác */
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.2));
+  }
+</style>
+
+<script>
+(function() {
+  const panda = document.getElementById('pandaPet');
+  if (!panda) return;
+
+  let currentX = 20;
+  let targetX = 20;
+  let isIdle = false;
+
+  // Lấy chiều rộng màn hình an toàn
+  const getMaxX = () => window.innerWidth - 60;
+
+  // Hàm chọn hành động ngẫu nhiên cho Panda
+  function pandaLogic() {
+    if (Math.random() < 0.3) {
+      // 30% cơ hội Panda đứng lại nghỉ ngơi / nằm chơi
+      isIdle = true;
+      panda.style.transform = 'scale(1)';
+    } else {
+      // 70% cơ hội Panda tự chọn 1 điểm mới để đi tới
+      isIdle = false;
+      targetX = Math.random() * getMaxX();
+    }
+  }
+
+  // Cập nhật vị trí từng khung hình (di chuyển mượt)
+  function updatePandaPosition() {
+    if (!isIdle && Math.abs(targetX - currentX) > 2) {
+      // Xác định hướng quay mặt của Panda (Trái / Phải)
+      if (targetX > currentX) {
+        currentX += 1.2; // Tốc độ đi
+        panda.style.transform = 'scaleX(-1)'; // Quay sang phải
+      } else {
+        currentX -= 1.2;
+        panda.style.transform = 'scaleX(1)'; // Quay sang trái
+      }
+      panda.style.left = currentX + 'px';
+    }
+
+    requestAnimationFrame(updatePandaPosition);
+  }
+
+  // Cứ 3-5 giây đổi hành động 1 lần
+  setInterval(pandaLogic, 3500);
+  updatePandaPosition();
+
+  // Tương tác: Bấm vào Panda thì nó nhảy bắn lên vui vẻ
+  panda.addEventListener('click', function() {
+    panda.style.transition = 'bottom 0.2s ease, transform 0.2s ease';
+    panda.style.bottom = '60px';
+    setTimeout(() => {
+      panda.style.bottom = '20px';
+      setTimeout(() => { panda.style.transition = 'transform 0.3s ease'; }, 200);
+    }, 200);
+  });
+
+  // Tương tác khi di chuột tới gần: Panda tò mò đi về hướng con trỏ chuột
+  window.addEventListener('mousemove', function(e) {
+    // Chỉ kích hoạt đi theo chuột nếu khoảng cách gần
+    if (Math.abs(e.clientX - currentX) < 200 && Math.random() < 0.05) {
+      targetX = Math.min(Math.max(10, e.clientX - 20), getMaxX());
+      isIdle = false;
+    }
+  });
+})();
+</script>
+
     
 </body>
 
