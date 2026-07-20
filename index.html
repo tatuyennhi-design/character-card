@@ -1705,9 +1705,9 @@ function toggleMusic(){
 })();
 </script>
 
-<!-- Khung chứa con chibi -->
+    <!-- Khung chứa con chibi -->
 <div id="chibi-walker">
-    <img id="chibi-img" src="chibicuoi.gif" alt="Chibi">
+    <img id="chibi-img" src="" alt="Chibi">
 </div>
 
 <style>
@@ -1719,7 +1719,7 @@ function toggleMusic(){
 }
 
 #chibi-walker img {
-    width: 100px; /* Chỉnh kích thước chibi */
+    width: 120px; /* Độ rộng con chibi */
     height: auto;
     display: block;
 }
@@ -1737,52 +1737,53 @@ function toggleMusic(){
 </style>
 
 <script>
-(function() {
-    // 1. DÁN LINK ANH GIF VÀO ĐÂY
-    const imgBo   = "chibicuoi.gif";       // GIF đang bò
-    const imgTeKhoc = "chibikhoc.gif"; // GIF té & khóc
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. LINK ANH GIF
+    const imgBo     = "https://imgur.com/a/Hd5DTvy"; 
+    const imgTeKhoc = "https://imgur.com/a/NFcZ5Zr";
 
     const chibi = document.getElementById('chibi-walker');
     const chibiImg = document.getElementById('chibi-img');
 
-    // 2. CHỌN HƯỚNG BÒ NGẪU NHIÊN (0: Trái->Phải, 1: Phải->Trái, 2: Trên->Dưới, 3: Dưới->Trên)
+    // Gán ảnh bò ban đầu
+    chibiImg.src = imgBo;
+
+    // Chọn hướng bò ngẫu nhiên (0: Trái->Phải, 1: Phải->Trái, 2: Trên->Dưới, 3: Dưới->Trên)
     const direction = Math.floor(Math.random() * 4);
 
     let posX = 0, posY = 0;
     let targetX = 0, targetY = 0;
-    let speed = 2.5; // Tốc độ di chuyển
+    let speed = 3; 
 
     const winW = window.innerWidth;
     const winH = window.innerHeight;
 
-    // Thiết lập vị trí bắt đầu và điểm dừng ngẫu nhiên theo hướng
     if (direction === 0) { // Trái sang Phải
-        posX = -120;
-        posY = Math.random() * (winH - 200) + 50;
-        targetX = winW * (0.3 + Math.random() * 0.4); // Dừng ở khoảng giữa màn hình
+        posX = -150;
+        posY = Math.random() * (winH - 250) + 50;
+        targetX = winW * (0.3 + Math.random() * 0.3);
         targetY = posY;
     } else if (direction === 1) { // Phải sang Trái
-        posX = winW + 20;
-        posY = Math.random() * (winH - 200) + 50;
-        targetX = winW * (0.3 + Math.random() * 0.4);
+        posX = winW + 50;
+        posY = Math.random() * (winH - 250) + 50;
+        targetX = winW * (0.4 + Math.random() * 0.3);
         targetY = posY;
-        chibiImg.style.transform = "scaleX(-1)"; // Lật ngược hình lại cho đúng hướng bò
+        chibiImg.style.transform = "scaleX(-1)"; // Lật mặt
     } else if (direction === 2) { // Trên xuống Dưới
-        posX = Math.random() * (winW - 200) + 50;
-        posY = -120;
+        posX = Math.random() * (winW - 250) + 50;
+        posY = -150;
         targetX = posX;
-        targetY = winH * (0.3 + Math.random() * 0.4);
+        targetY = winH * (0.3 + Math.random() * 0.3);
     } else if (direction === 3) { // Dưới lên Trên
-        posX = Math.random() * (winW - 200) + 50;
-        posY = winH + 20;
+        posX = Math.random() * (winW - 250) + 50;
+        posY = winH + 50;
         targetX = posX;
-        targetY = winH * (0.3 + Math.random() * 0.4);
+        targetY = winH * (0.4 + Math.random() * 0.3);
     }
 
     chibi.style.left = posX + 'px';
     chibi.style.top = posY + 'px';
 
-    // Vòng lặp di chuyển
     function move() {
         let reached = false;
 
@@ -1803,19 +1804,16 @@ function toggleMusic(){
     }
 
     function startCryingScene() {
-        // Đổi hình sang GIF té khóc
         chibiImg.src = imgTeKhoc;
-
-        // Cho khóc trong 2.5 giây rồi biến mất
         setTimeout(() => {
             chibi.classList.add('poof-effect');
             setTimeout(() => chibi.remove(), 400);
         }, 2500);
     }
 
-    // Bắt đầu chạy
+    // Cho bò luôn!
     move();
-})();
+});
 </script>
     
 </body>
