@@ -187,7 +187,7 @@
 
     <script>
         // Thay link Google Apps Script mới của mày vào đây nếu cần
-        const API_URL = "https://script.google.com/macros/s/AKfycbznk_2C-ykMvulVrzfPVby7OR04cj6Ufi6-XowE6bbP4pNL0kgyPQMy8qk0V8Irtx5wwg/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxTbgf0s8dUcFjONVEx7mS0w2FFTaTgv61Fo1FoNSk-y1_qA3nX1rUWRb0vbuTjHHk7Hg/exec"; 
         
         const charDetails = {
             "Nguyễn Vĩnh Hiên": {
@@ -341,22 +341,12 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
 
-     function handleClickAndOpen(name, targetUrl) {
-            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
+    function handleClickAndOpen(name, targetUrl) {
+            // Ném thẳng tên và link đích vào Google Apps Script
+            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}&url=${encodeURIComponent(targetUrl)}`;
             
-            // Dùng form ẩn bắn qua iframe để lừa trình duyệt, giúp gửi lệnh cộng điểm đi mượt mà 
-            // mà không bị chặn CORS hay bị hủy khi mở tab mới
-            let form = document.createElement('form');
-            form.action = clickUrl;
-            form.method = 'GET';
-            form.target = 'hidden_iframe'; 
-            
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-            
-            // Mở trang DokiChat hoặc GG AI ngay lập tức
-            window.open(targetUrl, '_blank');
+            // Mở link Apps Script, nó tự cộng điểm rồi tự động nhảy sang DokiChat/GG AI cho mày
+            window.open(clickUrl, '_blank');
         }
 
         function closeModal() {
