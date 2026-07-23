@@ -186,6 +186,7 @@
     </div>
 
     <script>
+        // Thay link Google Apps Script mới của mày vào đây nếu cần
         const API_URL = "https://script.google.com/macros/s/AKfycbzi8MruQtSLcAVSLOHUicREtv8hfEcMNMIsGOPu1Nrmd3CKhaSDoxWuqWymKWFUtJZuxg/exec"; 
         
         const charDetails = {
@@ -326,7 +327,6 @@
             const btnDoki = document.getElementById('mDoki');
             const btnGG = document.getElementById('mGG');
             
-            // Xử lý sự kiện click đính kèm gửi điểm trước khi mở tab mới
             btnDoki.onclick = function(e) {
                 e.preventDefault();
                 handleClickAndOpen(data.name, data.linkDoki);
@@ -344,7 +344,6 @@
         async function handleClickAndOpen(name, targetUrl) {
             const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
             
-            // Dùng sendBeacon để gửi dữ liệu ngầm lên Google Sheet an toàn 100% không sợ bị hủy tab
             if (navigator.sendBeacon) {
                 navigator.sendBeacon(clickUrl);
             } else {
