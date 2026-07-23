@@ -255,11 +255,9 @@
                 else if (realRank === 2) crown = '<span class="crown" style="color: var(--silver);">👑</span>';
                 else if (realRank === 3) crown = '<span class="crown" style="color: var(--bronze);">👑</span>';
                 
-                // Chuẩn hóa tên: xóa khoảng trắng thừa và chuẩn hóa Unicode (NFC) để khớp tuyệt đối
                 const rawName = char.Name ? String(char.Name) : "";
                 const cleanName = rawName.trim().normalize("NFC");
                 
-                // Tìm kiếm linh hoạt hơn (thử tìm trực tiếp hoặc chuẩn hóa)
                 let detail = defaultDetail;
                 for (let key in charDetails) {
                     if (key.trim().normalize("NFC").toLowerCase() === cleanName.toLowerCase()) {
@@ -267,6 +265,30 @@
                         break;
                     }
                 }
+
+                // Đóng gói data an toàn bằng cách truyền qua thuộc tính thay vì nhét trực tiếp JSON vào onclick
+                const itemData = encodeURIComponent(JSON.stringify({name: cleanName, ...detail}));
+
+                listDiv.innerHTML += `
+                    <div class="char-item">
+                        <div class="rank-box">
+                            <span class="rank-number">${realRank}</span>
+                            ${crown}
+                        </div>
+                        <img src="${detail.avatar}" class="char-avatar" onerror="this.src='https://via.placeholder.com/150/FAFA33/333333?text=?'">
+                        <div class="char-name" onclick="openModalFromStr('${itemData}')">${cleanName}</div>
+                        <div class="char-score">${char[currentTab] || 0} lượt</div>
+                    </div>
+                `;
+            });
+            renderPagination(totalPages);
+        }
+
+        // Hàm hỗ trợ giải mã data an toàn không sợ lỗi dấu nháy
+        function openModalFromStr(encodedStr) {
+            const data = JSON.parse(decodeURIComponent(encodedStr));
+            openModal(data);
+        }
 
                 listDiv.innerHTML += `
                     <div class="char-item">
