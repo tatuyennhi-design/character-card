@@ -186,7 +186,9 @@
     </div>
 
     <script>
-       
+        // Thay link Google Apps Script mới của mày vào đây nếu cần
+        const API_URL = "https://script.google.com/macros/s/AKfycbxTbgf0s8dUcFjONVEx7mS0w2FFTaTgv61Fo1FoNSk-y1_qA3nX1rUWRb0vbuTjHHk7Hg/exec"; 
+        
         const charDetails = {
             "Nguyễn Vĩnh Hiên": {
                 avatar: "nvh.png",
@@ -211,90 +213,146 @@
             linkDoki: "#",
             linkGG: "#"
         };
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  // Cấu hình Firebase của mày đây
-  const firebaseConfig = {
-    apiKey: "AIzaSyC8ksReOeGVbSPlybFhGaO6wue46ID9YME",
-    authDomain: "xuhuong-6949e.firebaseapp.com",
-    projectId: "xuhuong-6949e",
-    storageBucket: "xuhuong-6949e.firebasestorage.app",
-    messagingSenderId: "454402686292",
-    appId: "1:454402686292:web:10bf845eed08cfb29f1cc1",
-    measurementId: "G-ZB8Y02NJJN"
-  };
+        let allData = [];
+        let currentTab = 'ScoreWeek';
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        const maxItems = 50;
+        let musicStarted = false;
+        let activePageCharacters = [];
 
-  // Khởi tạo Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+        async function loadData() {
+            try {
+                const response = await fetch(API_URL);
+                const textData = await response.text();
+                if (textData.trim().startsWith('<')) {
+                    throw new Error("API trả về trang HTML thay vì JSON!");
+                }
+                allData = JSON.parse(textData);
+                document.getElementById('loading').style.display = 'none';
+                renderList();
+            } catch (error) {
+                console.error("Lỗi:", error);
+                document.getElementById('loading').innerText = "Lỗi tải dữ liệu!";
+            }
+        }
 
-  let allData = [];
-  let currentTab = 'ScoreWeek';
-  let currentPage = 1;
-  const itemsPerPage = 10;
-  const maxItems = 50;
-  let activePageCharacters = [];
+        function changeTab(sortKey) {
+            currentTab = sortKey;
+            currentPage = 1;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderList();
+        }
 
-  // --- HÀM TẢI DỮ LIỆU TỪ FIRESTORE ---
-  window.loadDataFromFirebase = async function() {
-    try {
-      const querySnapshot = await getDocs(collection(db, "characters"));
-      allData = [];
-      querySnapshot.forEach((docSnap) => {
-        let item = docSnap.data();
-        item.id = docSnap.id; // Lấy ID của document để tí cộng điểm
-        allData.push(item);
-      });
-      
-      // Ẩn chữ đang tải nếu có
-      const loadingEl = document.getElementById('loading');
-      if(loadingEl) loadingEl.style.display = 'none';
-      
-      if(typeof renderList === 'function') {
-        renderList();
-      }
-    } catch (error) {
-      console.error("Lỗi tải Firebase:", error);
-      const loadingEl = document.getElementById('loading');
-      if(loadingEl) loadingEl.innerText = "Lỗi tải dữ liệu từ Firebase!";
-    }
-  }
+        function renderList() {
+            const listDiv = document.getElementById('rankingList');
+            listDiv.innerHTML = '';
+            
+            let sortedData = [...allData].sort((a, b) => (b[currentTab] || 0) - (a[currentTab] || 0));
+            sortedData = sortedData.slice(0, maxItems);
+            
+            const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = sortedData.slice(start, end);
 
-  // --- HÀM CLICK CỘNG ĐIỂM TRỰC TIẾP VÀO FIRESTORE ---
-  window.handleClickAndOpenFirebase = async function(charName, targetUrl) {
-    // 1. Mở ngay tab mới sang Doki / ggAI cho người chơi
-    window.open(targetUrl, '_blank');
+            activePageCharacters = [];
 
-    try {
-      // 2. Tìm đúng document của nhân vật trong mảng allData
-      const foundChar = allData.find(c => String(c.Name).trim().toLowerCase() === String(charName).trim().toLowerCase());
-      
-      if (foundChar && foundChar.id) {
-        const charRef = doc(db, "characters", foundChar.id);
-        
-        // Tự động cộng dồn +1 vào tất cả các mốc điểm
-        await updateDoc(charRef, {
-          ScoreWeek: increment(1),
-          ScoreMonth: increment(1),
-          ScoreYear: increment(1)
-        });
+            pageData.forEach((char, index) => {
+                const realRank = start + index + 1;
+                let crown = '';
+                if (realRank === 1) crown = '<span class="crown" style="color: var(--gold);">👑</span>';
+                else if (realRank === 2) crown = '<span class="crown" style="color: var(--silver);">👑</span>';
+                else if (realRank === 3) crown = '<span class="crown" style="color: var(--bronze);">👑</span>';
+                
+                const rawName = char.Name ? String(char.Name) : "";
+                const cleanName = rawName.trim().normalize("NFC");
+                
+                let detail = defaultDetail;
+                for (let key in charDetails) {
+                    if (key.trim().normalize("NFC").toLowerCase() === cleanName.toLowerCase()) {
+                        detail = charDetails[key];
+                        break;
+                    }
+                }
 
-        console.log("Cộng điểm thành công cho:", charName);
-        loadDataFromFirebase(); // Cập nhật lại dữ liệu ngầm
-      } else {
-        console.log("Không tìm thấy nhân vật này trên Firestore:", charName);
-      }
-    } catch (err) {
-      console.log("Lỗi cộng điểm Firebase:", err);
-    }
-  }
+                const charObj = {name: cleanName, ...detail};
+                activePageCharacters.push(charObj);
+                const currentIndex = activePageCharacters.length - 1;
 
-  // Chạy tải dữ liệu ngay khi mở trang
-  loadDataFromFirebase();
-</script>
-    
+                listDiv.innerHTML += `
+                    <div class="char-item">
+                        <div class="rank-box">
+                            <span class="rank-number">${realRank}</span>
+                            ${crown}
+                        </div>
+                        <img src="${detail.avatar}" class="char-avatar" onerror="this.src='https://via.placeholder.com/150/FAFA33/333333?text=?'">
+                        <div class="char-name" onclick="openModalByIndex(${currentIndex})">${cleanName}</div>
+                        <div class="char-score">${char[currentTab] || 0} lượt</div>
+                    </div>
+                `;
+            });
+            renderPagination(totalPages);
+        }
+
+        function openModalByIndex(index) {
+            const data = activePageCharacters[index];
+            if (data) {
+                openModal(data);
+            }
+        }
+
+        function renderPagination(totalPages) {
+            const pagDiv = document.getElementById('pagination');
+            pagDiv.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                pagDiv.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderList();
+        }
+
+        function openModal(data) {
+            document.getElementById('charModal').style.display = 'flex';
+            document.getElementById('mAvatar').src = data.avatar;
+            document.getElementById('mName').innerText = data.name;
+            document.getElementById('mGenre').innerText = data.genre;
+            document.getElementById('mStory').innerText = data.story;
+            
+            const btnDoki = document.getElementById('mDoki');
+            const btnGG = document.getElementById('mGG');
+            
+            btnDoki.onclick = function(e) {
+                e.preventDefault();
+                handleClickAndOpen(data.name, data.linkDoki);
+            };
+            
+            btnGG.onclick = function(e) {
+                e.preventDefault();
+                handleClickAndOpen(data.name, data.linkGG);
+            };
+            
+            document.getElementById('mStory').classList.remove('expanded');
+            document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
+        }
+
+    function handleClickAndOpen(name, targetUrl) {
+            // Ném thẳng tên và link đích vào Google Apps Script
+            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}&url=${encodeURIComponent(targetUrl)}`;
+            
+            // Mở link Apps Script, nó tự cộng điểm rồi tự động nhảy sang DokiChat/GG AI cho mày
+            window.open(clickUrl, '_blank');
+        }
+
+        function closeModal() {
+            document.getElementById('charModal').style.display = 'none';
+        }
+
         function toggleStory() {
             const story = document.getElementById('mStory');
             const btn = document.getElementById('mReadMore');
@@ -369,3 +427,4 @@
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 </body>
 </html>
+
