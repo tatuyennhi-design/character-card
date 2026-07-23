@@ -327,14 +327,14 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
         
-        function handleClickAndOpen(name, targetUrl) {
-            // 1. Gửi lệnh cộng điểm ngầm về Sheet mà không cần mở trang load
-            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
-            fetch(clickUrl, { mode: 'no-cors' }).catch(err => console.log(err));
+       function handleClickAndOpen(name, targetUrl) {
+    // 1. Dùng cái iframe ẩn để ép Google Apps Script chạy, không bao giờ bị trình duyệt chặn
+    const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
+    document.getElementById('hidden_iframe').src = clickUrl;
 
-            // 2. Mở trực tiếp link Doki hoặc ggAI ở tab mới
-            window.open(targetUrl, '_blank');
-        }
+    // 2. Mở ngay lập tức link Doki hoặc ggAI ở tab mới
+    window.open(targetUrl, '_blank');
+}
 
         function closeModal() {
             document.getElementById('charModal').style.display = 'none';
