@@ -6,11 +6,11 @@
     <title>Bảng Xếp Hạng Nhân Vật - Tiệm Chút</title>
     <style>
     :root {
-        --lemon: #F4D03F;       /* Vàng chanh tươi sáng, sang trọng */
-        --lemon-light: #FCF3CF; /* Vàng kem nhạt làm nền dịu mắt */
-        --lemon-dark: #D4AC0D;  /* Vàng đậm cho viền/hover */
+        --lemon: #F4D03F;
+        --lemon-light: #FCF3CF;
+        --lemon-dark: #D4AC0D;
         --white: #FFFFFF;
-        --text: #2C3E50;        /* Chữ tối màu dễ đọc */
+        --text: #2C3E50;
         --gold: #F1C40F;
         --silver: #95A5A6;
         --bronze: #D35400;
@@ -183,8 +183,8 @@
             </div>
         </div>
     </div>
-<script>
-     <script>
+
+    <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbx5lIarR2ObX8R5yUQ0VKElLk4bK3UAtqvOzNmBav2W_a6aoAHbO8qNHGajIYJr9Fgw/exec"; 
         
         const charDetails = {
@@ -216,16 +216,28 @@
         let currentTab = 'ScoreWeek';
         let currentPage = 1;
         const itemsPerPage = 10;
+        const maxItems = 50;
         let musicStarted = false;
+        
+        // Lưu trữ tạm danh sách chi tiết nhân vật qua cơ chế an toàn theo index, chống triệt để lỗi cú pháp JSON
+        let activePageCharacters = [];
 
         async function loadData() {
             try {
                 const response = await fetch(API_URL);
-                allData = await response.json();
+                const textData = await response.text();
+                
+                // Kiểm tra xem dữ liệu trả về có bị lỗi HTML (bắt đầu bằng dấu <) hay không
+                if (textData.trim().startsWith('<')) {
+                    throw new Error("API trả về trang HTML thay vì JSON!");
+                }
+                
+                allData = JSON.parse(textData);
                 document.getElementById('loading').style.display = 'none';
                 renderList();
             } catch (error) {
-                document.getElementById('loading').innerText = "Lỗi tải dữ liệu!";
+                console.error("Lỗi:", error);
+                document.getElementById('loading').innerText = "Lỗi tải dữ liệu! Hãy kiểm tra lại link API hoặc quyền truy cập Apps Script.";
             }
         }
 
@@ -242,12 +254,14 @@
             listDiv.innerHTML = '';
             
             let sortedData = [...allData].sort((a, b) => (b[currentTab] || 0) - (a[currentTab] || 0));
-            sortedData = sortedData.slice(0, 50);
+            sortedData = sortedData.slice(0, maxItems);
             
             const totalPages = Math.ceil(sortedData.length / itemsPerPage);
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
             const pageData = sortedData.slice(start, end);
+
+            activePageCharacters = []; // Reset mảng tạm của trang hiện tại
 
             pageData.forEach((char, index) => {
                 const realRank = start + index + 1;
@@ -267,7 +281,10 @@
                     }
                 }
 
-                const itemData = encodeURIComponent(JSON.stringify({name: cleanName, ...detail}));
+                // Gom chung dữ liệu nhân vật vào mảng theo index để gọi trực tiếp qua hàm, loại bỏ hoàn toàn khả năng lỗi chuỗi HTML/JSON
+                const charObj = {name: cleanName, ...detail};
+                activePageCharacters.push(charObj);
+                const currentIndex = activePageCharacters.length - 1;
 
                 listDiv.innerHTML += `
                     <div class="char-item">
@@ -276,7 +293,7 @@
                             ${crown}
                         </div>
                         <img src="${detail.avatar}" class="char-avatar" onerror="this.src='https://via.placeholder.com/150/FAFA33/333333?text=?'">
-                        <div class="char-name" onclick="openModalFromStr('${itemData}')">${cleanName}</div>
+                        <div class="char-name" onclick="openModalByIndex(${currentIndex})">${cleanName}</div>
                         <div class="char-score">${char[currentTab] || 0} lượt</div>
                     </div>
                 `;
@@ -284,9 +301,11 @@
             renderPagination(totalPages);
         }
 
-        function openModalFromStr(encodedStr) {
-            const data = JSON.parse(decodeURIComponent(encodedStr));
-            openModal(data);
+        function openModalByIndex(index) {
+            const data = activePageCharacters[index];
+            if (data) {
+                openModal(data);
+            }
         }
 
         function renderPagination(totalPages) {
@@ -349,7 +368,7 @@
                 bgMusic.play().then(() => {
                     vinyl.classList.add('playing');
                     musicStarted = true;
-                }).catch(err => console.log("Trình duyệt chặn:", err));
+                }).catch(err => console.log("Trình duyệt chặn phát nhạc:", err));
             } else {
                 bgMusic.pause();
                 vinyl.classList.remove('playing');
@@ -364,7 +383,7 @@
                     vinyl.classList.add('playing');
                     musicStarted = true;
                     document.removeEventListener('click', autoPlayFirstClick);
-                }).catch(err => {});
+                }).catch(err => console.log("Chờ tương tác thêm"));
             }
         }, { once: true });
 
