@@ -256,8 +256,7 @@
                 else if (realRank === 2) crown = '<span class="crown" style="color: var(--silver);">👑</span>';
                 else if (realRank === 3) crown = '<span class="crown" style="color: var(--bronze);">👑</span>';
                 
-                // Sử dụng .trim() để lọc sạch khoảng trắng thừa từ Google Sheet trả về
-                const cleanName = char.Name ? String(char.Name).trim() : "";
+                const cleanName = String(char.Name || "").trim();
                 const detail = charDetails[cleanName] || defaultDetail;
 
                 listDiv.innerHTML += `
