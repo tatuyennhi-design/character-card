@@ -187,7 +187,7 @@
 
     <script>
         // Thay link Google Apps Script mới của mày vào đây nếu cần
-        const API_URL = "https://script.google.com/macros/s/AKfycbweQ81M4t8SJrXS8XNy_krpkWFl85UNUU7iwbJxTA_QzDwyDPIxAjAbxXEgrxZzdPiEhw/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbzHGv2oTXEUY8yL1gyrVWRI2EPB3OhUiNyf2uQRv6MoEIvaGY1Pu9ZezCX7PdGhCuze4A/exec"; 
         
         const charDetails = {
             "Nguyễn Vĩnh Hiên": {
@@ -341,12 +341,22 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
 
-    function handleClickAndOpen(name, targetUrl) {
-            // Ném thẳng tên và link đích vào Google Apps Script
-            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}&url=${encodeURIComponent(targetUrl)}`;
+   async function handleClickAndOpen(name, targetUrl) {
+            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
             
-            // Mở link Apps Script, nó tự cộng điểm rồi tự động nhảy sang DokiChat/GG AI cho mày
-            window.open(clickUrl, '_blank');
+            // Dùng fetch với chế độ keepalive để ép trình duyệt gửi ngầm lệnh cộng điểm đi thành công 100%
+            try {
+                await fetch(clickUrl, { 
+                    method: 'GET',
+                    mode: 'no-cors', // Bỏ qua kiểm tra CORS để không bị lỗi từ chối kết nối
+                    keepalive: true  // Giữ kết nối ngầm chạy tiếp ngay cả khi đã mở tab mới
+                });
+            } catch (err) {
+                console.log("Đã gửi lệnh cộng điểm ngầm");
+            }
+            
+            // Mở tab mới của Google AI hoặc DokiChat cực kỳ mượt mà
+            window.open(targetUrl, '_blank');
         }
 
         function closeModal() {
