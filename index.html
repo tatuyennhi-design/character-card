@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng Xếp Hạng Nhân Vật - Tiệm Chút</title>
     <style>
-        /* Tông màu Vàng Chanh & Trắng */
         :root {
-            --lemon: #FAFA33; /* Vàng chanh */
+            --lemon: #FAFA33;
             --lemon-light: #FFFFE0;
             --white: #FFFFFF;
             --text: #333333;
@@ -26,7 +25,6 @@
             cursor: default;
         }
 
-        /* Dải ánh sáng khi rê chuột */
         .cursor-light {
             position: fixed; width: 50px; height: 50px;
             background: radial-gradient(circle, rgba(250,250,51,0.6) 0%, rgba(255,255,255,0) 70%);
@@ -35,7 +33,6 @@
             transition: top 0.05s ease, left 0.05s ease;
         }
 
-        /* Nút điều hướng Top */
         .nav-buttons {
             display: flex; justify-content: center; gap: 20px; padding: 30px 20px;
             flex-wrap: wrap; position: relative; z-index: 10;
@@ -54,7 +51,6 @@
             transform: translateY(-2px);
         }
 
-        /* Bảng Xếp Hạng */
         .ranking-container {
             max-width: 800px; margin: 0 auto 50px;
             background: rgba(255, 255, 255, 0.85);
@@ -99,7 +95,6 @@
         
         .char-score { font-weight: bold; color: #777; background: #f9f9f9; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
 
-        /* Phân Trang */
         .pagination { display: flex; justify-content: center; margin-top: 25px; gap: 8px; flex-wrap: wrap; }
         .page-btn { 
             padding: 8px 14px; border: 1px solid var(--lemon); 
@@ -109,7 +104,6 @@
         .page-btn:hover { background: var(--lemon-light); }
         .page-btn.active { background: var(--lemon); font-weight: bold; }
 
-        /* Đĩa Than Nhạc */
         .vinyl-container {
             position: fixed; bottom: 30px; right: 30px;
             width: 70px; height: 70px; border-radius: 50%;
@@ -122,7 +116,6 @@
         .vinyl-center { width: 20px; height: 20px; background: var(--lemon); border-radius: 50%; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Modal Thông Tin Nhân Vật */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;
@@ -141,7 +134,6 @@
         .read-more { color: #b3a300; cursor: pointer; font-weight: bold; font-size: 0.9em; display: inline-block; margin-bottom: 15px;}
         .modal-links { display: flex; justify-content: center; gap: 15px; }
         
-        /* Hiệu ứng Click Hoa Đào */
         .petal-click {
             position: fixed; width: 15px; height: 15px;
             background: #ffb7c5; border-radius: 15px 0 15px 0;
@@ -153,7 +145,6 @@
             100% { transform: scale(0.3) translateY(60px) rotate(180deg); opacity: 0; }
         }
 
-        /* Mùa xuân - Hoa rơi nền */
         .spring-petal {
             position: fixed; top: -10%;
             background: #ffc0cb; border-radius: 15px 0 15px 0;
@@ -167,19 +158,15 @@
 </head>
 <body>
 
-    <!-- Dải sáng rê chuột -->
     <div class="cursor-light" id="cursorLight"></div>
-
-    <!-- Background mùa xuân -->
     <div id="springBg"></div>
 
-    <!-- Nút điều hướng -->
     <div class="nav-buttons">
         <a href="#" class="btn-nav">Quay lại Tiệm chút</a>
         <a href="#" class="btn-nav">Góc giao lưu ước nguyện</a>
+        <a href="#" class="btn-nav">Feedback</a>
     </div>
 
-    <!-- Bảng xếp hạng -->
     <div class="ranking-container">
         <div class="tabs">
             <div class="tab active" onclick="changeTab('ScoreWeek')">Top Tuần</div>
@@ -192,16 +179,13 @@
         <div class="pagination" id="pagination"></div>
     </div>
 
-    <!-- Đĩa than -->
     <div class="vinyl-container" id="vinyl" onclick="toggleMusic()" title="Bật/Tắt nhạc">
         <div class="vinyl-center"></div>
     </div>
     
-    <!-- AUDIO LINKS -->
     <audio id="bgMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
     <audio id="tingSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
 
-    <!-- Modal Thông Tin -->
     <div class="modal" id="charModal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -218,28 +202,23 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. KẾT NỐI API TỪ GOOGLE APPS SCRIPT
-        // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbxMPcpdce_x2H_vm9jhpy0lHrKb9AiOiZj8ivmNzXEsx8G0tR11YvtD8D5qyHeeso0OkA/exec"; 
+        // THAY LINK WEB APP CỦA MÀY VÀO ĐÂY
+        const API_URL = "https://script.google.com/macros/s/AKfycbx5lIarR2ObX8R5yUQ0VKElLk4bK3UAtqvOzNmBav2W_a6aoAHbO8qNHGajIYJr9FxFgw/exec"; 
         
-        // ==========================================
-        // 2. KHO DỮ LIỆU THÔNG TIN NHÂN VẬT
-        // ==========================================
         const charDetails = {
             "Nguyễn Vĩnh Hiên": {
                 avatar: "nvh.png",
                 genre: "Việt Nam xưa, ông giáo trẻ, 1930, miền tây",
-                story: "Năm 1933, làng Phong Mỹ đón một làn gió lạ từ Sài thành hoa lệ thổi về. Giữa những rặng dừa xanh ngắt và những cánh đồng lúa thẳng cánh cò bay của miền Tây Nam Bộ, sự xuất hiện của gã giáo trẻ Nguyễn Vĩnh Hiên với bộ đồ Tây phẳng phiu, chiếc kính gọng tròn và xấp báo Phụ nữ Tân văn đã trở thành đề tài bàn tán xôn xao nơi đầu làng cuối bãi.\n\nHiên về đây không chỉ với mảnh bằng sư phạm loại ưu hay cái lý tưởng khai dân trí cao đẹp. Trong lồng ngực gã trai 23 tuổi ấy còn mang theo một bí mật nặng nề về sự sa sút của gia đình mình năm xưa, mà kẻ đứng sau bóng tối không ai khác chính là ông Hội đồng Lê – người quyền thế nhất vùng này. Thế nhưng, số phận thật khéo trêu ngươi, khi chính ông Hội đồng lại là người gửi thư mời Hiên về dinh thự để dạy tiếng Pháp cho đứa con gái cưng duy nhất của ông – cô Út.\n\nCô út, vị tiểu thư lá ngọc cành vàng gắn liền với vẻ đẹp kiêu sa rực rỡ đầy nắng, được ông hội đồng Lê cưng chiều nuôi dưỡng, chỉ cần cô thích thì sẽ được ông hội đồng đưa vào trong tay. Hai con người, hai thế giới đối lập – một bên là gã trí thức nghèo đầy tự trọng và một bên là nàng tiểu thư lá ngọc cành vàng – sắp sửa va vào nhau trong một buổi chiều định mệnh dưới mái nhà cổ chữ Đinh trầm mặc.",
+                story: "Năm 1933, làng Phong Mỹ đón một làn gió lạ từ Sài thành hoa lệ thổi về...",
                 linkDoki: "https://www.dokichat.club/vi/chat/4280df64-dc19-49c9-8102-fd7d657af585",
-                linkGG: "https://aistudio.google.com/app/prompts?state=%7B%22ids%22:%5B%221otutEavYYlnT0zl68-BpI4KR3t_qzhuL%22%5D,%22action%22:%22open%22,%22userId%22:%22100357821591707252635%22,%22resourceKeys%22:%7B%7D%7D&usp=sharing"
+                linkGG: "https://aistudio.google.com/app/prompts?state=..."
             },
             "Lê Phan Vĩnh Uy": {
                 avatar: "lpvu.png",
                 genre: "Việt Nam xưa, miền tây, đấu đá, tranh giành",
-                story: "Cái tên Lê Phan Vĩnh Uy từ lâu đã là một bóng ma uy quyền bao trùm lên khắp cù lao Ông Chưởng. Hắn không phải hạng công tử bột sinh ra đã ngậm thìa vàng, mà là con của một người ở, đi lên từ những đắng cay, nhục nhã của kẻ bị dòng họ khinh khi. Chính cái quá khứ bị chà đạp đó đã nhào nặn nên một ông Hội đồng Vĩnh Uy điềm tĩnh đến đáng sợ, kẻ dùng sự tàn nhẫn để thâu tóm đất đai và dùng lễ giáo làm sợi dây thừng siết chặt mọi thứ trong tầm tay.\n\nĐối với hắn, đàn bà trong nhà cũng như những món đồ trưng bày để khẳng định vị thế. Bà Lớn Ngọc Diệp là cái danh giá dòng tộc, Bà Hai Mỹ Lệ là kho vàng lộ thiên. Còn mợ Ba mà hắn đã cứu về từ đống đổ nát của một danh gia tri thức bị hàm oan – hắn coi mợ là món báu vật thanh tao nhất. Hắn say mê cái trí tuệ ẩn sau đôi mắt to tròn kia, say cả cái thân hình nảy nở, trổ mã phổng phao dù tuổi đời mợ còn trẻ. Giữa một nhà toàn những kẻ diễn kịch, hắn dùng sự sủng ái dành cho mợ Ba như một cách để thử thách lòng kiên nhẫn của những người còn lại.",
+                story: "Cái tên Lê Phan Vĩnh Uy từ lâu đã là một bóng ma uy quyền...",
                 linkDoki: "https://www.dokichat.club/vi/chat/b9288038-556d-407e-bf65-a2eb3bc18e42",
-                linkGG: "https://aistudio.google.com/app/prompts?state=%7B%22ids%22:%5B%2217lWQJt-Y0H--RjDqQU3QtTKWamrOweOi%22%5D,%22action%22:%22open%22,%22userId%22:%22100357821591707252635%22,%22resourceKeys%22:%7B%7D%7D&usp=sharing"
+                linkGG: "https://aistudio.google.com/app/prompts?state=..."
             }
         };
 
@@ -251,9 +230,6 @@
             linkGG: "#"
         };
 
-        // ==========================================
-        // 3. LOGIC XỬ LÝ
-        // ==========================================
         let allData = [];
         let currentTab = 'ScoreWeek';
         let currentPage = 1;
@@ -267,7 +243,16 @@
                 document.getElementById('loading').style.display = 'none';
                 renderList();
             } catch (error) {
-                document.getElementById('loading').innerText = "Lỗi tải dữ liệu. Hãy kiểm tra lại link Google Apps Script!";
+                document.getElementById('loading').innerText = "Lỗi tải dữ liệu!";
+            }
+        }
+
+        async function registerClick(name) {
+            try {
+                await fetch(`${API_URL}?action=click&name=${encodeURIComponent(name)}`);
+                loadData(); // Tải lại dữ liệu ngầm để cập nhật số lượt mới lên web
+            } catch (err) {
+                console.error("Lỗi cộng điểm:", err);
             }
         }
 
@@ -328,9 +313,6 @@
             renderList();
         }
 
-        // ==========================================
-        // 4. HIỆU ỨNG & GIAO DIỆN PHỤ
-        // ==========================================
         function openModal(data) {
             document.getElementById('charModal').style.display = 'flex';
             document.getElementById('mAvatar').src = data.avatar;
@@ -343,22 +325,20 @@
             document.getElementById('mStory').classList.remove('expanded');
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
 
-            // --- GỬI REQUEST CỘNG 1 LƯỢT LÊN GOOGLE SHEET ---
-            fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Tránh lỗi CORS từ Google Apps Script
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: data.name })
-            }).then(() => {
-                console.log("Đã ghi nhận 1 lượt click cho: " + data.name);
-                // Sau khi cộng xong có thể load lại data ngầm nếu muốn cập nhật ngay số liệu hiển thị
-                // loadData(); 
-            }).catch(err => {
-                console.error("Lỗi cộng điểm:", err);
-            });
-        } 
+            // Gọi hàm cộng điểm lên Google Sheet ngay khi click
+            registerClick(data.name);
+        }
+
+        function closeModal() {
+            document.getElementById('charModal').style.display = 'none';
+        }
+
+        function toggleStory() {
+            const story = document.getElementById('mStory');
+            const btn = document.getElementById('mReadMore');
+            story.classList.toggle('expanded');
+            btn.innerText = story.classList.contains('expanded') ? 'Rút gọn' : 'Đọc tiếp...';
+        }
 
         function toggleMusic() {
             const bgMusic = document.getElementById('bgMusic');
