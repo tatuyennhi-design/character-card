@@ -187,7 +187,7 @@
 
     <script>
         // Thay link Google Apps Script mới của mày vào đây nếu cần
-        const API_URL = "https://script.google.com/macros/s/AKfycbxTbgf0s8dUcFjONVEx7mS0w2FFTaTgv61Fo1FoNSk-y1_qA3nX1rUWRb0vbuTjHHk7Hg/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxKsLLgMsiz-z0R0mwvdtZpDPoYghqS08NWBaurhxmLY8bzKJnuhrgrB8bRF6NfvLbRMA/exec"; 
         
         const charDetails = {
             "Nguyễn Vĩnh Hiên": {
@@ -341,18 +341,17 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
 
-    function handleClickAndOpen(name, targetUrl) {
-            // Ném thẳng tên và link đích vào Google Apps Script
-            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}&url=${encodeURIComponent(targetUrl)}`;
-            
-            // Mở link Apps Script, nó tự cộng điểm rồi tự động nhảy sang DokiChat/GG AI cho mày
-            window.open(clickUrl, '_blank');
-        }
-
-        function closeModal() {
-            document.getElementById('charModal').style.display = 'none';
-        }
-
+   function handleClickAndOpen(name, targetUrl) {
+    // 1. Mở ngay link GG AI hoặc DokiChat sang tab mới cho người chơi
+    window.open(targetUrl, '_blank');
+    
+    // 2. Bắn tín hiệu ngầm về Google Sheet để cộng điểm tự động
+    const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
+    
+    fetch(clickUrl, { mode: 'no-cors' })
+        .then(() => console.log("Đã gửi điểm lên Sheet thành công!"))
+        .catch(err => console.log("Lỗi:", err));
+}
         function toggleStory() {
             const story = document.getElementById('mStory');
             const btn = document.getElementById('mReadMore');
