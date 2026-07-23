@@ -1,408 +1,398 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Xếp Hạng Nhân Vật - Tiệm Chút</title>
-    <style>
-        :root {
-            --lemon: #FAFA33;
-            --lemon-light: #FFFFE0;
-            --white: #FFFFFF;
-            --text: #333333;
-            --gold: #FFD700;
-            --silver: #C0C0C0;
-            --bronze: #CD7F32;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bảng Xếp Hạng Nhân Vật - Tiệm Chút</title>
+<style>
+:root {
+    --lemon: #FAFA33;
+    --lemon-light: #FFFFE0;
+    --white: #FFFFFF;
+    --text: #333333;
+    --gold: #FFD700;
+    --silver: #C0C0C0;
+    --bronze: #CD7F32;
+}
+body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--white) 30%, var(--lemon-light) 100%);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+}
+.cursor-light {
+    position: fixed; width: 50px; height: 50px;
+    background: radial-gradient(circle, rgba(250,250,51,0.6) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%; pointer-events: none;
+    transform: translate(-50%, -50%); z-index: 9999;
+    transition: top 0.05s ease, left 0.05s ease;
+}
+.nav-buttons {
+    display: flex; justify-content: center; gap: 20px; padding: 30px 20px;
+    flex-wrap: wrap; position: relative; z-index: 10;
+}
+.btn-nav {
+    background-color: var(--white);
+    border: 2px solid var(--lemon);
+    padding: 10px 25px; border-radius: 30px;
+    font-weight: bold; cursor: pointer; transition: 0.3s; text-decoration: none; color: var(--text);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.btn-nav:hover {
+    background-color: var(--lemon);
+    box-shadow: 0 0 15px var(--lemon);
+    transform: translateY(-2px);
+}
+.ranking-container {
+    max-width: 800px; margin: 0 auto 50px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 20px; padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    position: relative; z-index: 10;
+    backdrop-filter: blur(5px);
+}
+.tabs {
+    display: flex; justify-content: center; gap: 30px; margin-bottom: 25px;
+}
+.tab {
+    padding: 10px 20px; cursor: pointer; border-bottom: 3px solid transparent;
+    font-weight: bold; font-size: 1.1em; transition: 0.3s;
+}
+.tab.active { border-bottom: 3px solid #d4c100; color: #b3a300; }
+.tab:hover { color: #d4c100; }
+.char-item {
+    display: flex; align-items: center; padding: 12px 15px;
+    border-bottom: 1px dashed #ddd; transition: 0.2s;
+    border-radius: 10px;
+}
+.char-item:hover { background-color: rgba(250, 250, 51, 0.2); }
+.rank-box { display: flex; align-items: center; width: 70px; }
+.rank-number { font-weight: bold; font-size: 1.2em; width: 30px; text-align: center; }
+.crown { font-size: 1.5em; margin-left: 5px; }
+.char-avatar {
+    width: 45px; height: 45px; border-radius: 50%;
+    object-fit: cover; border: 2px solid var(--lemon);
+    margin-right: 15px;
+} 
+.char-name {
+    flex-grow: 1; font-weight: bold; font-size: 1.15em;
+    cursor: pointer; color: #333; transition: 0.2s;
+}
+.char-name:hover { color: #b3a300; text-decoration: underline; }
+.char-score { 
+    font-weight: bold; color: #777; background: #f9f9f9; padding: 5px 10px;
+    border-radius: 15px; font-size: 0.9em; 
+}
+.pagination { display: flex; justify-content: center; margin-top: 25px; gap: 8px; flex-wrap: wrap; }
+.page-btn {
+    padding: 8px 14px; border: 1px solid var(--lemon);
+    background: var(--white); cursor: pointer; border-radius: 8px;
+    transition: 0.2s;
+}
+.page-btn:hover { background: var(--lemon-light); }
+.page-btn.active { background: var(--lemon); font-weight: bold; }
+.vinyl-container {
+    position: fixed; bottom: 30px; right: 30px;
+    width: 70px; height: 70px; border-radius: 50%;
+    background: repeating-radial-gradient(#111 0%, #111 5%, #222 5.5%, #222 6%);
+    border: 3px solid var(--lemon); box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    display: flex; justify-content: center; align-items: center; cursor: pointer;
+    animation: spin 3s linear infinite; animation-play-state: paused; z-index: 100;
+}
+.vinyl-container.playing { animation-play-state: running; }
+.vinyl-center { width: 20px; height: 20px; background: var(--lemon); border-radius: 50%; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
 
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--white) 30%, var(--lemon-light) 100%);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            cursor: default;
-        }
+.modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;
+    backdrop-filter: blur(3px);
+}
+.modal-content {
+    background: var(--white); padding: 30px; border-radius: 20px;
+    max-width: 450px; width: 90%; text-align: center; position: relative;
+    border: 3px solid var(--lemon); box-shadow: 0 0 25px rgba(250,250,51,0.5);
+}
+.close-btn { 
+    position: absolute; top: 12px; right: 18px; font-size: 1.8em; cursor: pointer;
+    color: #888; transition: 0.2s;
+} 
+.close-btn:hover { color: #f00; }
 
-        .cursor-light {
-            position: fixed; width: 50px; height: 50px;
-            background: radial-gradient(circle, rgba(250,250,51,0.6) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%; pointer-events: none;
-            transform: translate(-50%, -50%); z-index: 9999;
-            transition: top 0.05s ease, left 0.05s ease;
-        }
+.modal-avatar { 
+    width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--lemon); 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;
+}
+.story-text { 
+    max-height: 70px; overflow: hidden; transition: max-height 0.4s ease;
+    text-align: justify; margin: 15px 0; font-size: 0.95em; line-height: 1.5; color: #555;
+}
+.story-text.expanded { max-height: 600px; }
+.read-more { 
+    color: #b3a300; cursor: pointer; font-weight: bold; font-size: 0.9em; 
+    display: inline-block; margin-bottom: 15px;
+}
+.modal-links { display: flex; justify-content: center; gap: 15px; }
 
-        .nav-buttons {
-            display: flex; justify-content: center; gap: 20px; padding: 30px 20px;
-            flex-wrap: wrap; position: relative; z-index: 10;
-        }
-        .btn-nav {
-            background-color: var(--white);
-            border: 2px solid var(--lemon);
-            padding: 10px 25px; border-radius: 30px;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            text-decoration: none; color: var(--text);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .btn-nav:hover {
-            background-color: var(--lemon); 
-            box-shadow: 0 0 15px var(--lemon);
-            transform: translateY(-2px);
-        }
+.petal-click {
+    position: fixed; width: 15px; height: 15px;
+    background: #ffb7c5; border-radius: 15px 0 15px 0;
+    pointer-events: none; z-index: 9999;
+    animation: clickFall 1s ease-out forwards;
+}
+@keyframes clickFall {
+    0% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: scale(0.3) translateY(60px) rotate(180deg); opacity: 0; }
+}
 
-        .ranking-container {
-            max-width: 800px; margin: 0 auto 50px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 20px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            position: relative; z-index: 10;
-            backdrop-filter: blur(5px);
-        }
-        
-        .tabs {
-            display: flex; justify-content: center; gap: 30px; margin-bottom: 25px;
-        }
-        .tab {
-            padding: 10px 20px; cursor: pointer; border-bottom: 3px solid transparent;
-            font-weight: bold; font-size: 1.1em; transition: 0.3s;
-        }
-        .tab.active { border-bottom: 3px solid #d4c100; color: #b3a300; }
-        .tab:hover { color: #d4c100; }
-
-        .char-item {
-            display: flex; align-items: center; padding: 12px 15px;
-            border-bottom: 1px dashed #ddd; transition: 0.2s;
-            border-radius: 10px;
-        }
-        .char-item:hover { background-color: rgba(250, 250, 51, 0.2); }
-        
-        .rank-box { display: flex; align-items: center; width: 70px; }
-        .rank-number { font-weight: bold; font-size: 1.2em; width: 30px; text-align: center; }
-        .crown { font-size: 1.5em; margin-left: 5px; }
-        
-        .char-avatar { 
-            width: 45px; height: 45px; border-radius: 50%; 
-            object-fit: cover; border: 2px solid var(--lemon); 
-            margin-right: 15px;
-        }
-        
-        .char-name { 
-            flex-grow: 1; font-weight: bold; font-size: 1.15em; 
-            cursor: pointer; color: #333; transition: 0.2s;
-        }
-        .char-name:hover { color: #b3a300; text-decoration: underline; }
-        
-        .char-score { font-weight: bold; color: #777; background: #f9f9f9; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
-
-        .pagination { display: flex; justify-content: center; margin-top: 25px; gap: 8px; flex-wrap: wrap; }
-        .page-btn { 
-            padding: 8px 14px; border: 1px solid var(--lemon); 
-            background: var(--white); cursor: pointer; border-radius: 8px;
-            transition: 0.2s;
-        }
-        .page-btn:hover { background: var(--lemon-light); }
-        .page-btn.active { background: var(--lemon); font-weight: bold; }
-
-        .vinyl-container {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 70px; height: 70px; border-radius: 50%;
-            background: repeating-radial-gradient(#111 0%, #111 5%, #222 5.5%, #222 6%);
-            border: 3px solid var(--lemon); box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            display: flex; justify-content: center; align-items: center; cursor: pointer;
-            animation: spin 3s linear infinite; animation-play-state: paused; z-index: 100;
-        }
-        .vinyl-container.playing { animation-play-state: running; }
-        .vinyl-center { width: 20px; height: 20px; background: var(--lemon); border-radius: 50%; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;
-            backdrop-filter: blur(3px);
-        }
-        .modal-content {
-            background: var(--white); padding: 30px; border-radius: 20px;
-            max-width: 450px; width: 90%; text-align: center; position: relative;
-            border: 3px solid var(--lemon); box-shadow: 0 0 25px rgba(250,250,51,0.5);
-        }
-        .close-btn { position: absolute; top: 12px; right: 18px; font-size: 1.8em; cursor: pointer; color: #888; transition: 0.2s;}
-        .close-btn:hover { color: #f00; }
-        .modal-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--lemon); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;}
-        .story-text { max-height: 70px; overflow: hidden; transition: max-height 0.4s ease; text-align: justify; margin: 15px 0; font-size: 0.95em; line-height: 1.5; color: #555;}
-        .story-text.expanded { max-height: 600px; }
-        .read-more { color: #b3a300; cursor: pointer; font-weight: bold; font-size: 0.9em; display: inline-block; margin-bottom: 15px;}
-        .modal-links { display: flex; justify-content: center; gap: 15px; }
-        
-        .petal-click {
-            position: fixed; width: 15px; height: 15px;
-            background: #ffb7c5; border-radius: 15px 0 15px 0;
-            pointer-events: none; z-index: 9999;
-            animation: clickFall 1s ease-out forwards;
-        }
-        @keyframes clickFall {
-            0% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: scale(0.3) translateY(60px) rotate(180deg); opacity: 0; }
-        }
-
-        .spring-petal {
-            position: fixed; top: -10%;
-            background: #ffc0cb; border-radius: 15px 0 15px 0;
-            pointer-events: none; z-index: 1; opacity: 0.6;
-            animation: fall linear infinite;
-        }
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); }
-        }
-    </style>
+.spring-petal {
+    position: fixed; top: -10%;
+    background: #ffc0cb; border-radius: 15px 0 15px 0;
+    pointer-events: none; z-index: 1; opacity: 0.6;
+    animation: fall linear infinite;
+}
+@keyframes fall {
+    to { transform: translateY(110vh) rotate(360deg); }
+}
+</style>
 </head>
 <body>
+<div class="cursor-light" id="cursorLight"></div>
+<div id="springBg"></div>
 
-    <div class="cursor-light" id="cursorLight"></div>
-    <div id="springBg"></div>
+<div class="nav-buttons">
+    <!-- Bạn thay link của bạn vào chữ bên trong href="" nhé -->
+    <a href="LINK_QUAY_LAI_TIEM_CUA_BAN_VAO_DAY" class="btn-nav">Quay lại Tiệm</a>
+    <a href="LINK_GOC_GIAO_LUU_CUA_BAN_VAO_DAY" class="btn-nav">Góc giao lưu ước nguyện & Feedback</a>
+</div>
 
-    <div class="nav-buttons">
-        <a href="#" class="btn-nav">Quay lại Tiệm chút</a>
-        <a href="#" class="btn-nav">Góc giao lưu ước nguyện</a>
-        <a href="#" class="btn-nav">Feedback</a>
+<div class="ranking-container">
+    <div class="tabs">
+        <div class="tab active" onclick="changeTab('ScoreWeek')">Top Tuần</div>
+        <div class="tab" onclick="changeTab('ScoreMonth')">Top Tháng</div>
+        <div class="tab" onclick="changeTab('ScoreYear')">Top Năm</div>
     </div>
+    <div id="loading" style="text-align: center; color: #888; font-style: italic;">Đang tải dữ liệu...</div>
+    <div id="rankingList"></div>
+    <div class="pagination" id="pagination"></div>
+</div>
 
-    <div class="ranking-container">
-        <div class="tabs">
-            <div class="tab active" onclick="changeTab('ScoreWeek')">Top Tuần</div>
-            <div class="tab" onclick="changeTab('ScoreMonth')">Top Tháng</div>
-            <div class="tab" onclick="changeTab('ScoreYear')">Top Năm</div>
+<div class="vinyl-container" id="vinyl" onclick="toggleMusic()" title="Bật/Tắt nhạc">
+    <div class="vinyl-center"></div>
+</div>
+
+<audio id="bgMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
+<audio id="tingSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+
+<div class="modal" id="charModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <img src="" id="mAvatar" class="modal-avatar">
+        <h2 id="mName" style="color: #b3a300; margin: 5px 0;">Tên nhân vật</h2>
+        <p style="margin: 5px 0; font-size: 0.9em; color: #888;"><strong>Thể loại:</strong> <span id="mGenre"></span></p>
+        <div class="story-text" id="mStory"></div>
+        <span class="read-more" id="mReadMore" onclick="toggleStory()">Đọc tiếp...</span>
+        <div class="modal-links">
+            <a href="#" id="mDoki" target="_blank" class="btn-nav">Dokichat</a>
+            <a href="#" id="mGG" target="_blank" class="btn-nav">ggAI</a>
         </div>
-        
-        <div id="loading" style="text-align: center; color: #888; font-style: italic;">Đang tải dữ liệu...</div>
-        <div id="rankingList"></div>
-        <div class="pagination" id="pagination"></div>
     </div>
+</div>
 
-    <div class="vinyl-container" id="vinyl" onclick="toggleMusic()" title="Bật/Tắt nhạc">
-        <div class="vinyl-center"></div>
-    </div>
+<script>
+// THAY LINK WEB APP CỦA MÀY VÀO ĐÂY
+const API_URL = "https://script.google.com/macros/s/AKfycbx5llarR2ObX8R5yUQ0VKEILk4bK3UAtqvOzNmBav2W_a6a0AHbO8qNHGajIYJr9FxFgw/exec";
+
+const charDetails = {
+    "Nguyễn Vĩnh Hiên": {
+        avatar: "nvh.png",
+        genre: "Việt Nam xưa, ông giáo trẻ, 1930, miền tây",
+        story: "Năm 1933, làng Phong Mỹ đón một làn gió lạ từ Sài thành hoa lệ thổi về...",
+        linkDoki: "https://www.dokichat.club/vi/chat/4280df64-dc19-49c9-8102-fd7d657af585",
+        linkGG: "https://aistudio.google.com/app/prompts?state=..."
+    },
+    "Lê Phan Vĩnh Uy": {
+        avatar: "Ipvu.png",
+        genre: "Việt Nam xưa, miền tây, đấu đá, tranh giành",
+        story: "Cái tên Lê Phan Vĩnh Uy từ lâu đã là một bóng ma uy quyền...",
+        linkDoki: "https://www.dokichat.club/vi/chat/b9288038-556d-407e-bf65-a2eb3bc18e42",
+        linkGG: "https://aistudio.google.com/app/prompts?state=..."
+    }
+};
+
+const defaultDetail = {
+    avatar: "https://via.placeholder.com/150/FAFA33/333333?text=?",
+    genre: "Chưa cập nhật",
+    story: "Cốt truyện đang được cập nhật...",
+    linkDoki: "#",
+    linkGG: "#"
+};
+
+let allData = [];
+let currentTab = 'ScoreWeek';
+let currentPage = 1;
+const itemsPerPage = 10;
+const maxItems = 50;
+
+async function loadData() {
+    try {
+        const response = await fetch(API_URL);
+        allData = await response.json();
+        document.getElementById('loading').style.display = 'none';
+        renderList();
+    } catch (error) {
+        document.getElementById('loading').innerText = "Lỗi tải dữ liệu!";
+    }
+}
+
+function changeTab(sortKey) {
+    currentTab = sortKey;
+    currentPage = 1;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    renderList();
+}
+
+function renderList() {
+    const listDiv = document.getElementById('rankingList');
+    listDiv.innerHTML = '';
+    let sortedData = [...allData].sort((a, b) => (b[currentTab] || 0) - (a[currentTab] || 0));
+    sortedData = sortedData.slice(0, maxItems);
     
-    <audio id="bgMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
-    <audio id="tingSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
-
-    <div class="modal" id="charModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <img src="" id="mAvatar" class="modal-avatar">
-            <h2 id="mName" style="color: #b3a300; margin: 5px 0;">Tên nhân vật</h2>
-            <p style="margin: 5px 0; font-size: 0.9em; color: #888;"><strong>Thể loại:</strong> <span id="mGenre"></span></p>
-            <div class="story-text" id="mStory"></div>
-            <span class="read-more" id="mReadMore" onclick="toggleStory()">Đọc tiếp...</span>
-            <div class="modal-links">
-                <a href="#" id="mDoki" target="_blank" class="btn-nav">Dokichat</a>
-                <a href="#" id="mGG" target="_blank" class="btn-nav">ggAI</a>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // THAY LINK WEB APP CỦA MÀY VÀO ĐÂY
-        const API_URL = "https://script.google.com/macros/s/AKfycbx5lIarR2ObX8R5yUQ0VKElLk4bK3UAtqvOzNmBav2W_a6aoAHbO8qNHGajIYJr9FxFgw/exec"; 
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageData = sortedData.slice(start, end);
+    
+    pageData.forEach((char, index) => {
+        const realRank = start + index + 1;
+        let crown = '';
+        if (realRank === 1) crown = '<span class="crown" style="color: var(--gold);">👑</span>';
+        else if (realRank === 2) crown = '<span class="crown" style="color: var(--silver);">👑</span>';
+        else if (realRank === 3) crown = '<span class="crown" style="color: var(--bronze);">👑</span>';
         
-        const charDetails = {
-            "Nguyễn Vĩnh Hiên": {
-                avatar: "nvh.png",
-                genre: "Việt Nam xưa, ông giáo trẻ, 1930, miền tây",
-                story: "Năm 1933, làng Phong Mỹ đón một làn gió lạ từ Sài thành hoa lệ thổi về...",
-                linkDoki: "https://www.dokichat.club/vi/chat/4280df64-dc19-49c9-8102-fd7d657af585",
-                linkGG: "https://aistudio.google.com/app/prompts?state=..."
-            },
-            "Lê Phan Vĩnh Uy": {
-                avatar: "lpvu.png",
-                genre: "Việt Nam xưa, miền tây, đấu đá, tranh giành",
-                story: "Cái tên Lê Phan Vĩnh Uy từ lâu đã là một bóng ma uy quyền...",
-                linkDoki: "https://www.dokichat.club/vi/chat/b9288038-556d-407e-bf65-a2eb3bc18e42",
-                linkGG: "https://aistudio.google.com/app/prompts?state=..."
-            }
-        };
+        const detail = charDetails[char.Name] || defaultDetail;
+        listDiv.innerHTML += `
+        <div class="char-item">
+            <div class="rank-box">
+                <span class="rank-number">${realRank}</span> ${crown}
+            </div>
+            <img src="${detail.avatar}" class="char-avatar" onerror="this.src='https://via.placeholder.com/150/FAFA33/333333?text=?'">
+            <div class="char-name" onclick='openModal(${JSON.stringify({name: char.Name, ...detail})})'>${char.Name}</div>
+            <div class="char-score">${char[currentTab] || 0} lượt</div>
+        </div>
+        `;
+    });
+    renderPagination(totalPages);
+}
 
-        const defaultDetail = {
-            avatar: "https://via.placeholder.com/150/FAFA33/333333?text=?",
-            genre: "Chưa cập nhật",
-            story: "Cốt truyện đang được cập nhật...",
-            linkDoki: "#",
-            linkGG: "#"
-        };
+function renderPagination(totalPages) {
+    const pagDiv = document.getElementById('pagination');
+    pagDiv.innerHTML = '';
+    for (let i = 1; i <= totalPages; i++) {
+        pagDiv.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+    }
+}
 
-        let allData = [];
-        let currentTab = 'ScoreWeek';
-        let currentPage = 1;
-        const itemsPerPage = 10;
-        const maxItems = 50; 
+function changePage(page) {
+    currentPage = page;
+    renderList();
+}
 
-        async function loadData() {
-            try {
-                const response = await fetch(API_URL);
-                allData = await response.json();
-                document.getElementById('loading').style.display = 'none';
-                renderList();
-            } catch (error) {
-                document.getElementById('loading').innerText = "Lỗi tải dữ liệu!";
-            }
-        }
+function openModal(data) {
+    document.getElementById('charModal').style.display = 'flex';
+    document.getElementById('mAvatar').src = data.avatar;
+    document.getElementById('mName').innerText = data.name;
+    document.getElementById('mGenre').innerText = data.genre;
+    document.getElementById('mStory').innerText = data.story;
+    
+    // Gắn link đồng thời gán sự kiện cộng điểm khi bấm vào nút Dokichat hoặc ggAI
+    const btnDoki = document.getElementById('mDoki');
+    const btnGG = document.getElementById('mGG');
+    btnDoki.href = data.linkDoki;
+    btnGG.href = data.linkGG;
+    
+    // Xóa sự kiện cũ (nếu có) để tránh bị cộng dồn nhiều lần
+    btnDoki.onclick = function() { registerClick(data.name); };
+    btnGG.onclick = function() { registerClick(data.name); }; 
+    
+    document.getElementById('mStory').classList.remove('expanded');
+    document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
+}
 
-        async function registerClick(name) {
-            try {
-                await fetch(`${API_URL}?action=click&name=${encodeURIComponent(name)}`);
-                loadData(); // Tải lại dữ liệu ngầm để cập nhật số lượt mới lên web
-            } catch (err) {
-                console.error("Lỗi cộng điểm:", err);
-            }
-        }
+// Hàm gọi ngầm cộng điểm lên Google Sheet
+async function registerClick(name) {
+    try {
+        await fetch(`${API_URL}?action=click&name=${encodeURIComponent(name)}`);
+        console.log("Đã cộng 1 lượt cho: " + name);
+        loadData(); // Tải lại dữ liệu ngầm để cập nhật số lượt mới lên web
+    } catch (err) {
+        console.error("Lỗi cộng điểm:", err);
+    }
+}
 
-        function changeTab(sortKey) {
-            currentTab = sortKey;
-            currentPage = 1;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            renderList();
-        }
+function closeModal() {
+    document.getElementById('charModal').style.display = 'none';
+}
 
-        function renderList() {
-            const listDiv = document.getElementById('rankingList');
-            listDiv.innerHTML = '';
-            
-            let sortedData = [...allData].sort((a, b) => (b[currentTab] || 0) - (a[currentTab] || 0));
-            sortedData = sortedData.slice(0, maxItems);
-            
-            const totalPages = Math.ceil(sortedData.length / itemsPerPage);
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = sortedData.slice(start, end);
+function toggleStory() {
+    const story = document.getElementById('mStory');
+    const btn = document.getElementById('mReadMore');
+    story.classList.toggle('expanded');
+    btn.innerText = story.classList.contains('expanded') ? 'Rút gọn' : 'Đọc tiếp...';
+}
 
-            pageData.forEach((char, index) => {
-                const realRank = start + index + 1;
-                let crown = '';
-                if (realRank === 1) crown = '<span class="crown" style="color: var(--gold);">👑</span>';
-                else if (realRank === 2) crown = '<span class="crown" style="color: var(--silver);">👑</span>';
-                else if (realRank === 3) crown = '<span class="crown" style="color: var(--bronze);">👑</span>';
+function toggleMusic() {
+    const bgMusic = document.getElementById('bgMusic');
+    const vinyl = document.getElementById('vinyl');
+    if (bgMusic.paused) {
+        bgMusic.play();
+        vinyl.classList.add('playing');
+    } else {
+        bgMusic.pause();
+        vinyl.classList.remove('playing');
+    }
+}
 
-                const detail = charDetails[char.Name] || defaultDetail;
+document.addEventListener('mousemove', e => {
+    const cursor = document.getElementById('cursorLight');
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+}); 
 
-                listDiv.innerHTML += `
-                    <div class="char-item">
-                        <div class="rank-box">
-                            <span class="rank-number">${realRank}</span>
-                            ${crown}
-                        </div>
-                        <img src="${detail.avatar}" class="char-avatar" onerror="this.src='https://via.placeholder.com/150/FAFA33/333333?text=?'">
-                        <div class="char-name" onclick='openModal(${JSON.stringify({name: char.Name, ...detail})})'>${char.Name}</div>
-                        <div class="char-score">${char[currentTab] || 0} lượt</div>
-                    </div>
-                `;
-            });
-            renderPagination(totalPages);
-        }
+document.addEventListener('click', e => {
+    const ting = document.getElementById('tingSound');
+    ting.currentTime = 0;
+    ting.play().catch(()=>{});
+    
+    const petal = document.createElement('div');
+    petal.className = 'petal-click';
+    petal.style.left = (e.clientX - 7) + 'px';
+    petal.style.top = (e.clientY - 7) + 'px';
+    document.body.appendChild(petal);
+    
+    setTimeout(() => petal.remove(), 1000);
+});
 
-        function renderPagination(totalPages) {
-            const pagDiv = document.getElementById('pagination');
-            pagDiv.innerHTML = '';
-            for (let i = 1; i <= totalPages; i++) {
-                pagDiv.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-            }
-        }
+function createSpringEffect() {
+    const bg = document.getElementById('springBg');
+    for(let i = 0; i < 15; i++) {
+        let petal = document.createElement('div');
+        petal.className = 'spring-petal';
+        petal.style.left = Math.random() * 100 + 'vw';
+        petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        petal.style.animationDelay = Math.random() * 5 + 's';
+        petal.style.width = (Math.random() * 10 + 10) + 'px';
+        petal.style.height = petal.style.width;
+        bg.appendChild(petal);
+    }
+}
 
-        function changePage(page) {
-            currentPage = page;
-            renderList();
-        }
-
-      function openModal(data) {
-            document.getElementById('charModal').style.display = 'flex';
-            document.getElementById('mAvatar').src = data.avatar;
-            document.getElementById('mName').innerText = data.name;
-            document.getElementById('mGenre').innerText = data.genre;
-            document.getElementById('mStory').innerText = data.story;
-            
-            // Gắn link đồng thời gán sự kiện cộng điểm khi bấm vào nút Dokichat hoặc ggAI
-            const btnDoki = document.getElementById('mDoki');
-            const btnGG = document.getElementById('mGG');
-
-            btnDoki.href = data.linkDoki;
-            btnGG.href = data.linkGG;
-
-            // Xóa sự kiện cũ (nếu có) để tránh bị cộng dồn nhiều lần
-            btnDoki.onclick = function() { registerClick(data.name); };
-            btnGG.onclick = function() { registerClick(data.name); };
-            
-            document.getElementById('mStory').classList.remove('expanded');
-            document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
-        }
-
-        // Hàm gọi ngầm cộng điểm lên Google Sheet
-        async function registerClick(name) {
-            try {
-                await fetch(`${API_URL}?action=click&name=${encodeURIComponent(name)}`);
-                console.log("Đã cộng 1 lượt cho: " + name);
-            } catch (err) {
-                console.error("Lỗi cộng điểm:", err);
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('charModal').style.display = 'none';
-        }
-
-        function toggleStory() {
-            const story = document.getElementById('mStory');
-            const btn = document.getElementById('mReadMore');
-            story.classList.toggle('expanded');
-            btn.innerText = story.classList.contains('expanded') ? 'Rút gọn' : 'Đọc tiếp...';
-        }
-
-        function toggleMusic() {
-            const bgMusic = document.getElementById('bgMusic');
-            const vinyl = document.getElementById('vinyl');
-            if (bgMusic.paused) {
-                bgMusic.play();
-                vinyl.classList.add('playing');
-            } else {
-                bgMusic.pause();
-                vinyl.classList.remove('playing');
-            }
-        }
-
-        document.addEventListener('mousemove', e => {
-            const cursor = document.getElementById('cursorLight');
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        document.addEventListener('click', e => {
-            const ting = document.getElementById('tingSound');
-            ting.currentTime = 0; 
-            ting.play().catch(()=>{}); 
-
-            const petal = document.createElement('div');
-            petal.className = 'petal-click';
-            petal.style.left = (e.clientX - 7) + 'px';
-            petal.style.top = (e.clientY - 7) + 'px';
-            document.body.appendChild(petal);
-            setTimeout(() => petal.remove(), 1000);
-        });
-
-        function createSpringEffect() {
-            const bg = document.getElementById('springBg');
-            for(let i = 0; i < 15; i++) {
-                let petal = document.createElement('div');
-                petal.className = 'spring-petal';
-                petal.style.left = Math.random() * 100 + 'vw';
-                petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
-                petal.style.animationDelay = Math.random() * 5 + 's';
-                petal.style.width = (Math.random() * 10 + 10) + 'px';
-                petal.style.height = petal.style.width;
-                bg.appendChild(petal);
-            }
-        }
-
-        createSpringEffect();
-        loadData();
-    </script>
+createSpringEffect();
+loadData();
+</script>
 </body>
 </html>
