@@ -286,12 +286,37 @@
             });
             renderPagination(totalPages);
         }
-        function openModalByIndex(index) {
-            const data = activePageCharacters[index];
-            if (data) {
-                openModal(data);
-            }
-        }
+        function openModal(data) {
+            document.getElementById('charModal').style.display = 'flex';
+            document.getElementById('mAvatar').src = data.avatar;
+            document.getElementById('mName').innerText = data.name;
+            document.getElementById('mGenre').innerText = data.genre;
+            document.getElementById('mStory').innerText = data.story;
+            
+            const btnDoki = document.getElementById('mDoki');
+            const btnGG = document.getElementById('mGG');
+            
+            // 1. Gắn thẳng link đích vào nút để trình duyệt tự mở (chống kẹt popup 100%)
+            btnDoki.href = data.linkDoki;
+            btnDoki.target = "_blank";
+            
+            // 2. Khi bấm vào, bắn lệnh ngầm qua iframe để cộng điểm
+            btnDoki.onclick = function() {
+                const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(data.name)}`;
+                document.getElementById('hidden_iframe').src = clickUrl;
+            };
+            
+            // Tương tự cho nút ggAI
+            btnGG.href = data.linkGG;
+            btnGG.target = "_blank";
+            btnGG.onclick = function() {
+                const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(data.name)}`;
+                document.getElementById('hidden_iframe').src = clickUrl;
+            };
+            
+            document.getElementById('mStory').classList.remove('expanded');
+            document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
+        } 
         function renderPagination(totalPages) {
             const pagDiv = document.getElementById('pagination');
             pagDiv.innerHTML = '';
@@ -327,14 +352,6 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
         
-       function handleClickAndOpen(name, targetUrl) {
-    // 1. Dùng cái iframe ẩn để ép Google Apps Script chạy, không bao giờ bị trình duyệt chặn
-    const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
-    document.getElementById('hidden_iframe').src = clickUrl;
-
-    // 2. Mở ngay lập tức link Doki hoặc ggAI ở tab mới
-    window.open(targetUrl, '_blank');
-}
 
         function closeModal() {
             document.getElementById('charModal').style.display = 'none';
