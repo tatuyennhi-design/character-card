@@ -321,7 +321,7 @@
             renderList();
         }
 
-        function openModal(data) {
+       function openModal(data) {
             document.getElementById('charModal').style.display = 'flex';
             document.getElementById('mAvatar').src = data.avatar;
             document.getElementById('mName').innerText = data.name;
@@ -330,27 +330,36 @@
             
             const btnDoki = document.getElementById('mDoki');
             const btnGG = document.getElementById('mGG');
-            btnDoki.href = data.linkDoki;
-            btnGG.href = data.linkGG;
             
-            btnDoki.onclick = function() { registerClick(data.name); };
-            btnGG.onclick = function() { registerClick(data.name); };
+            // Gán sự kiện click thông minh để gửi điểm xong mới mở tab
+            btnDoki.onclick = function(e) {
+                e.preventDefault();
+                handleClickAndOpen(data.name, data.linkDoki);
+            };
+            
+            btnGG.onclick = function(e) {
+                e.preventDefault();
+                handleClickAndOpen(data.name, data.linkGG);
+            };
             
             document.getElementById('mStory').classList.remove('expanded');
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
 
-        async function registerClick(name) {
-            try {
-                await fetch(`${API_URL}?action=click&name=${encodeURIComponent(name)}`);
-                console.log("Đã cộng 1 lượt cho: " + name);
-            } catch (err) {
-                console.error("Lỗi cộng điểm:", err);
+        async function handleClickAndOpen(name, targetUrl) {
+            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
+            
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(clickUrl);
+            } else {
+                try {
+                    await fetch(clickUrl, { keepalive: true });
+                } catch (err) {
+                    console.error("Lỗi cộng điểm:", err);
+                }
             }
-        }
-
-        function closeModal() {
-            document.getElementById('charModal').style.display = 'none';
+            
+            window.open(targetUrl, '_blank');
         }
 
         function toggleStory() {
