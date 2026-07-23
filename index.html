@@ -15,7 +15,6 @@
         --silver: #95A5A6;
         --bronze: #D35400;
     }
-
     body {
         margin: 0; padding: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -25,7 +24,6 @@
         overflow-x: hidden;
         cursor: default;
     }
-
     .cursor-light {
         position: fixed; width: 50px; height: 50px;
         background: radial-gradient(circle, rgba(244,208,63,0.5) 0%, rgba(255,255,255,0) 70%);
@@ -33,7 +31,6 @@
         transform: translate(-50%, -50%); z-index: 9999;
         transition: top 0.05s ease, left 0.05s ease;
     }
-
     .nav-buttons {
         display: flex; justify-content: center; gap: 20px; padding: 30px 20px;
         flex-wrap: wrap; position: relative; z-index: 10;
@@ -52,7 +49,6 @@
         box-shadow: 0 0 15px rgba(244,208,63,0.6);
         transform: translateY(-2px);
     }
-
     .ranking-container {
         max-width: 800px; margin: 0 auto 50px;
         background: rgba(255, 255, 255, 0.9);
@@ -62,7 +58,6 @@
         backdrop-filter: blur(5px);
         border: 2px solid rgba(244,208,63,0.3);
     }
-    
     .tabs {
         display: flex; justify-content: center; gap: 30px; margin-bottom: 25px;
     }
@@ -72,32 +67,26 @@
     }
     .tab.active { border-bottom: 3px solid var(--lemon-dark); color: var(--lemon-dark); }
     .tab:hover { color: var(--lemon-dark); }
-
     .char-item {
         display: flex; align-items: center; padding: 12px 15px;
         border-bottom: 1px dashed #FAD7A0; transition: 0.2s;
         border-radius: 10px;
     }
     .char-item:hover { background-color: rgba(244,208,63,0.15); }
-    
     .rank-box { display: flex; align-items: center; width: 70px; }
     .rank-number { font-weight: bold; font-size: 1.2em; width: 30px; text-align: center; }
     .crown { font-size: 1.5em; margin-left: 5px; }
-    
     .char-avatar { 
         width: 45px; height: 45px; border-radius: 50%; 
         object-fit: cover; border: 2px solid var(--lemon); 
         margin-right: 15px;
     }
-    
     .char-name { 
         flex-grow: 1; font-weight: bold; font-size: 1.15em; 
         cursor: pointer; color: var(--text); transition: 0.2s;
     }
     .char-name:hover { color: var(--lemon-dark); text-decoration: underline; }
-    
     .char-score { font-weight: bold; color: #5D6D7E; background: #FEF9E7; padding: 5px 12px; border-radius: 15px; font-size: 0.9em; border: 1px solid #FCF3CF; }
-
     .pagination { display: flex; justify-content: center; margin-top: 25px; gap: 8px; flex-wrap: wrap; }
     .page-btn { 
         padding: 8px 14px; border: 1px solid var(--lemon); 
@@ -106,7 +95,6 @@
     }
     .page-btn:hover { background: var(--lemon-light); }
     .page-btn.active { background: var(--lemon); font-weight: bold; border-color: var(--lemon-dark); }
-
     .vinyl-container {
         position: fixed; bottom: 30px; right: 30px;
         width: 70px; height: 70px; border-radius: 50%;
@@ -118,7 +106,6 @@
     .vinyl-container.playing { animation-play-state: running; }
     .vinyl-center { width: 20px; height: 20px; background: var(--lemon); border-radius: 50%; box-shadow: inset 0 0 3px rgba(0,0,0,0.5); }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-
     .modal {
         display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
@@ -136,7 +123,6 @@
     .story-text.expanded { max-height: 600px; }
     .read-more { color: var(--lemon-dark); cursor: pointer; font-weight: bold; font-size: 0.9em; display: inline-block; margin-bottom: 15px;}
     .modal-links { display: flex; justify-content: center; gap: 15px; }
-    
     .petal-click {
         position: fixed; width: 15px; height: 15px;
         background: #F9E79F; border-radius: 15px 0 15px 0;
@@ -147,7 +133,6 @@
         0% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
         100% { transform: scale(0.3) translateY(60px) rotate(180deg); opacity: 0; }
     }
-
     .spring-petal {
         position: fixed; top: -10%;
         background: rgba(244, 208, 63, 0.4); border-radius: 15px 0 15px 0;
@@ -158,18 +143,14 @@
         to { transform: translateY(110vh) rotate(360deg); }
     }
     </style>
-    </style>
 </head>
 <body>
-
     <div class="cursor-light" id="cursorLight"></div>
     <div id="springBg"></div>
-
     <div class="nav-buttons">
-    <a href="https://tatuyennhi-design.github.io/index.html/" class="btn-nav">Quay về Tiệm chính</a>
-    <a href="https://tatuyennhi-design.github.io/file-C-Windows-System32-index.html/" class="btn-nav">Góc Ước Nguyện Giao Lưu & Feedback</a>
-</div>
-
+        <a href="https://tatuyennhi-design.github.io/index.html/" class="btn-nav">Quay về Tiệm chính</a>
+        <a href="https://tatuyennhi-design.github.io/file-C-Windows-System32-index.html/" class="btn-nav">Góc Ước Nguyện Giao Lưu & Feedback</a>
+    </div>
     <div class="ranking-container">
         <div class="tabs">
             <div class="tab active" onclick="changeTab('ScoreWeek')">Top Tuần</div>
@@ -181,14 +162,13 @@
         <div id="rankingList"></div>
         <div class="pagination" id="pagination"></div>
     </div>
-
     <div class="vinyl-container" id="vinyl" onclick="toggleMusic()" title="Bật/Tắt nhạc">
         <div class="vinyl-center"></div>
     </div>
     
     <audio id="bgMusic" loop src="nhac.mp3"></audio>
     <audio id="tingSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-
+    
     <div class="modal" id="charModal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -205,18 +185,17 @@
     </div>
 
     <script>
-        // THAY LINK WEB APP CỦA MÀY VÀO ĐÂY
         const API_URL = "https://script.google.com/macros/s/AKfycbx5lIarR2ObX8R5yUQ0VKElLk4bK3UAtqvOzNmBav2W_a6aoAHbO8qNHGajIYJr9FxFgw/exec"; 
         
         const charDetails = {
-            "Nguyễn Vĩnh Hiên": {
+            "Nguyễn Vĩnh Hiên": {
                 avatar: "nvh.png",
                 genre: "Việt Nam xưa, ông giáo trẻ, 1930, miền tây",
                 story: "Năm 1933, làng Phong Mỹ đón một làn gió lạ từ Sài thành hoa lệ thổi về...",
                 linkDoki: "https://www.dokichat.club/vi/chat/4280df64-dc19-49c9-8102-fd7d657af585",
                 linkGG: "https://aistudio.google.com/app/prompts?state=..."
             },
-            "Lê Phan Vĩnh Uy": {
+            "Lê Phan Vĩnh Uy": {
                 avatar: "lpvu.png",
                 genre: "Việt Nam xưa, miền tây, đấu đá, tranh giành",
                 story: "Cái tên Lê Phan Vĩnh Uy từ lâu đã là một bóng ma uy quyền...",
@@ -237,7 +216,7 @@
         let currentTab = 'ScoreWeek';
         let currentPage = 1;
         const itemsPerPage = 10;
-        const maxItems = 50; 
+        let musicStarted = false;
 
         async function loadData() {
             try {
@@ -263,7 +242,7 @@
             listDiv.innerHTML = '';
             
             let sortedData = [...allData].sort((a, b) => (b[currentTab] || 0) - (a[currentTab] || 0));
-            sortedData = sortedData.slice(0, maxItems);
+            sortedData = sortedData.slice(0, 50);
             
             const totalPages = Math.ceil(sortedData.length / itemsPerPage);
             const start = (currentPage - 1) * itemsPerPage;
@@ -276,8 +255,9 @@
                 if (realRank === 1) crown = '<span class="crown" style="color: var(--gold);">👑</span>';
                 else if (realRank === 2) crown = '<span class="crown" style="color: var(--silver);">👑</span>';
                 else if (realRank === 3) crown = '<span class="crown" style="color: var(--bronze);">👑</span>';
-
-                const detail = charDetails[char.Name] || defaultDetail;
+                
+                const cleanName = String(char.Name || "").trim();
+                const detail = charDetails[cleanName] || defaultDetail;
 
                 listDiv.innerHTML += `
                     <div class="char-item">
@@ -286,7 +266,7 @@
                             ${crown}
                         </div>
                         <img src="${detail.avatar}" class="char-avatar" onerror="this.src='https://via.placeholder.com/150/FAFA33/333333?text=?'">
-                        <div class="char-name" onclick='openModal(${JSON.stringify({name: char.Name, ...detail})})'>${char.Name}</div>
+                        <div class="char-name" onclick='openModal(${JSON.stringify({name: cleanName, ...detail})})'>${cleanName}</div>
                         <div class="char-score">${char[currentTab] || 0} lượt</div>
                     </div>
                 `;
@@ -307,21 +287,18 @@
             renderList();
         }
 
-       function openModal(data) {
+        function openModal(data) {
             document.getElementById('charModal').style.display = 'flex';
             document.getElementById('mAvatar').src = data.avatar;
             document.getElementById('mName').innerText = data.name;
             document.getElementById('mGenre').innerText = data.genre;
             document.getElementById('mStory').innerText = data.story;
             
-            // Gắn link đồng thời gán sự kiện cộng điểm khi bấm vào nút Dokichat hoặc ggAI
             const btnDoki = document.getElementById('mDoki');
             const btnGG = document.getElementById('mGG');
-
             btnDoki.href = data.linkDoki;
             btnGG.href = data.linkGG;
-
-            // Xóa sự kiện cũ (nếu có) để tránh bị cộng dồn nhiều lần
+            
             btnDoki.onclick = function() { registerClick(data.name); };
             btnGG.onclick = function() { registerClick(data.name); };
             
@@ -329,7 +306,6 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
 
-        // Hàm gọi ngầm cộng điểm lên Google Sheet
         async function registerClick(name) {
             try {
                 await fetch(`${API_URL}?action=click&name=${encodeURIComponent(name)}`);
@@ -338,6 +314,7 @@
                 console.error("Lỗi cộng điểm:", err);
             }
         }
+
         function closeModal() {
             document.getElementById('charModal').style.display = 'none';
         }
@@ -348,39 +325,33 @@
             story.classList.toggle('expanded');
             btn.innerText = story.classList.contains('expanded') ? 'Rút gọn' : 'Đọc tiếp...';
         }
-<script>
-    let musicStarted = false;
 
-    function toggleMusic() {
-        const bgMusic = document.getElementById('bgMusic');
-        const vinyl = document.getElementById('vinyl');
-        
-        if (bgMusic.paused) {
-            bgMusic.play().then(() => {
-                vinyl.classList.add('playing');
-                musicStarted = true;
-            }).catch(err => console.log("Trình duyệt chặn phát nhạc:", err));
-        } else {
-            bgMusic.pause();
-            vinyl.classList.remove('playing');
-        }
-    }
-
-    // Mẹo: Cứ ai vừa bấm click đầu tiên bất kỳ đâu trên trang là nhạc tự động chạy luôn
-    document.addEventListener('click', function autoPlayFirstClick() {
-        if (!musicStarted) {
+        function toggleMusic() {
             const bgMusic = document.getElementById('bgMusic');
             const vinyl = document.getElementById('vinyl');
             
-            bgMusic.play().then(() => {
-                vinyl.classList.add('playing');
-                musicStarted = true;
-                // Sau khi kích hoạt thành công lần đầu thì gỡ sự kiện này đi
-                document.removeEventListener('click', autoPlayFirstClick);
-            }).catch(err => console.log("Chờ tương tác thêm"));
+            if (bgMusic.paused) {
+                bgMusic.play().then(() => {
+                    vinyl.classList.add('playing');
+                    musicStarted = true;
+                }).catch(err => console.log("Trình duyệt chặn:", err));
+            } else {
+                bgMusic.pause();
+                vinyl.classList.remove('playing');
+            }
         }
-    }, { once: true });
-</script>
+
+        document.addEventListener('click', function autoPlayFirstClick() {
+            if (!musicStarted) {
+                const bgMusic = document.getElementById('bgMusic');
+                const vinyl = document.getElementById('vinyl');
+                bgMusic.play().then(() => {
+                    vinyl.classList.add('playing');
+                    musicStarted = true;
+                    document.removeEventListener('click', autoPlayFirstClick);
+                }).catch(err => {});
+            }
+        }, { once: true });
 
         document.addEventListener('mousemove', e => {
             const cursor = document.getElementById('cursorLight');
@@ -390,9 +361,10 @@
 
         document.addEventListener('click', e => {
             const ting = document.getElementById('tingSound');
-            ting.currentTime = 0; 
-            ting.play().catch(()=>{}); 
-
+            if(ting) {
+                ting.currentTime = 0; 
+                ting.play().catch(()=>{}); 
+            }
             const petal = document.createElement('div');
             petal.className = 'petal-click';
             petal.style.left = (e.clientX - 7) + 'px';
