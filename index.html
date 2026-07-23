@@ -42,6 +42,7 @@
         font-weight: bold; cursor: pointer; transition: 0.3s;
         text-decoration: none; color: var(--text);
         box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        display: inline-block; text-align: center;
     }
     .btn-nav:hover {
         background-color: var(--lemon); 
@@ -185,7 +186,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx5lIarR2ObX8R5yUQ0VKElLk4bK3UAtqvOzNmBav2W_a6aoAHbO8qNHGajIYJr9FxFgw/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbx5lIarR2ObX8R5yUQ0VKElLk4bK3UAtqvOzNmBav2W_a6aoAHbO8qNHGajIYJr9Fgw/exec"; 
         
         const charDetails = {
             "Nguyễn Vĩnh Hiên": {
@@ -218,26 +219,21 @@
         const itemsPerPage = 10;
         const maxItems = 50;
         let musicStarted = false;
-        
-        // Lưu trữ tạm danh sách chi tiết nhân vật qua cơ chế an toàn theo index, chống triệt để lỗi cú pháp JSON
         let activePageCharacters = [];
 
         async function loadData() {
             try {
                 const response = await fetch(API_URL);
                 const textData = await response.text();
-                
-                // Kiểm tra xem dữ liệu trả về có bị lỗi HTML (bắt đầu bằng dấu <) hay không
                 if (textData.trim().startsWith('<')) {
                     throw new Error("API trả về trang HTML thay vì JSON!");
                 }
-                
                 allData = JSON.parse(textData);
                 document.getElementById('loading').style.display = 'none';
                 renderList();
             } catch (error) {
                 console.error("Lỗi:", error);
-                document.getElementById('loading').innerText = "Lỗi tải dữ liệu! Hãy kiểm tra lại link API hoặc quyền truy cập Apps Script.";
+                document.getElementById('loading').innerText = "Lỗi tải dữ liệu!";
             }
         }
 
@@ -261,7 +257,7 @@
             const end = start + itemsPerPage;
             const pageData = sortedData.slice(start, end);
 
-            activePageCharacters = []; // Reset mảng tạm của trang hiện tại
+            activePageCharacters = [];
 
             pageData.forEach((char, index) => {
                 const realRank = start + index + 1;
@@ -281,7 +277,6 @@
                     }
                 }
 
-                // Gom chung dữ liệu nhân vật vào mảng theo index để gọi trực tiếp qua hàm, loại bỏ hoàn toàn khả năng lỗi chuỗi HTML/JSON
                 const charObj = {name: cleanName, ...detail};
                 activePageCharacters.push(charObj);
                 const currentIndex = activePageCharacters.length - 1;
@@ -321,7 +316,7 @@
             renderList();
         }
 
-       function openModal(data) {
+        function openModal(data) {
             document.getElementById('charModal').style.display = 'flex';
             document.getElementById('mAvatar').src = data.avatar;
             document.getElementById('mName').innerText = data.name;
@@ -331,7 +326,7 @@
             const btnDoki = document.getElementById('mDoki');
             const btnGG = document.getElementById('mGG');
             
-            // Gán sự kiện click thông minh để gửi điểm xong mới mở tab
+            // Xử lý sự kiện click đính kèm gửi điểm trước khi mở tab mới
             btnDoki.onclick = function(e) {
                 e.preventDefault();
                 handleClickAndOpen(data.name, data.linkDoki);
@@ -349,6 +344,7 @@
         async function handleClickAndOpen(name, targetUrl) {
             const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
             
+            // Dùng sendBeacon để gửi dữ liệu ngầm lên Google Sheet an toàn 100% không sợ bị hủy tab
             if (navigator.sendBeacon) {
                 navigator.sendBeacon(clickUrl);
             } else {
@@ -360,6 +356,10 @@
             }
             
             window.open(targetUrl, '_blank');
+        }
+
+        function closeModal() {
+            document.getElementById('charModal').style.display = 'none';
         }
 
         function toggleStory() {
