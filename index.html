@@ -179,15 +179,20 @@
             <div class="story-text" id="mStory"></div>
             <span class="read-more" id="mReadMore" onclick="toggleStory()">Đọc tiếp...</span>
             <div class="modal-links">
+                <!-- Chỗ này đổi thành thẻ <a> để chống trình duyệt kẹt popup -->
                 <a href="#" id="mDoki" class="btn-nav">Dokichat</a>
                 <a href="#" id="mGG" class="btn-nav">ggAI</a>
             </div>
         </div>
     </div>
+
+    <!-- Cái Iframe tàng hình này dùng để âm thầm bắn lệnh cộng điểm qua Sheet nè -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
     <script>
-        // NHỚ ĐỔI LINK NÀY THÀNH LINK WEB APP MỚI NHẤT CỦA MÀY NHÉ!
-        const API_URL = "https://script.google.com/macros/s/AKfycbwPtXDAmZbc-TYDoYWYzglgtpHJTg2PToirnlZYTwDiqbHB6-scbZOsFW0e3U5b6y3Csg/exec";
-            
+        // CẬP NHẬT LẠI LINK API MỚI NHẤT CỦA MÀY VÀO ĐÂY NẾU MÀY CÓ DEPLOY LẠI
+        const API_URL = "https://script.google.com/macros/s/AKfycbxTbgf0s8dUcFjONVEx7mS0w2FFTaTgv61Fo1FoNSk-y1_qA3nX1rUWRb0vbuTjHHk7Hg/exec"; 
+        
         const charDetails = {
             "Nguyễn Vĩnh Hiên": {
                 avatar: "nvh.png",
@@ -218,6 +223,7 @@
         const maxItems = 50;
         let musicStarted = false;
         let activePageCharacters = [];
+        
         async function loadData() {
             try {
                 const response = await fetch(API_URL);
@@ -233,6 +239,7 @@
                 document.getElementById('loading').innerText = "Lỗi tải dữ liệu!";
             }
         }
+        
         function changeTab(sortKey) {
             currentTab = sortKey;
             currentPage = 1;
@@ -240,6 +247,7 @@
             event.target.classList.add('active');
             renderList();
         }
+        
         function renderList() {
             const listDiv = document.getElementById('rankingList');
             listDiv.innerHTML = '';
@@ -252,6 +260,7 @@
             const end = start + itemsPerPage;
             const pageData = sortedData.slice(start, end);
             activePageCharacters = [];
+            
             pageData.forEach((char, index) => {
                 const realRank = start + index + 1;
                 let crown = '';
@@ -272,6 +281,7 @@
                 const charObj = {name: cleanName, ...detail};
                 activePageCharacters.push(charObj);
                 const currentIndex = activePageCharacters.length - 1;
+                
                 listDiv.innerHTML += `
                     <div class="char-item">
                         <div class="rank-box">
@@ -286,37 +296,14 @@
             });
             renderPagination(totalPages);
         }
-        function openModal(data) {
-            document.getElementById('charModal').style.display = 'flex';
-            document.getElementById('mAvatar').src = data.avatar;
-            document.getElementById('mName').innerText = data.name;
-            document.getElementById('mGenre').innerText = data.genre;
-            document.getElementById('mStory').innerText = data.story;
-            
-            const btnDoki = document.getElementById('mDoki');
-            const btnGG = document.getElementById('mGG');
-            
-            // 1. Gắn thẳng link đích vào nút để trình duyệt tự mở (chống kẹt popup 100%)
-            btnDoki.href = data.linkDoki;
-            btnDoki.target = "_blank";
-            
-            // 2. Khi bấm vào, bắn lệnh ngầm qua iframe để cộng điểm
-            btnDoki.onclick = function() {
-                const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(data.name)}`;
-                document.getElementById('hidden_iframe').src = clickUrl;
-            };
-            
-            // Tương tự cho nút ggAI
-            btnGG.href = data.linkGG;
-            btnGG.target = "_blank";
-            btnGG.onclick = function() {
-                const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(data.name)}`;
-                document.getElementById('hidden_iframe').src = clickUrl;
-            };
-            
-            document.getElementById('mStory').classList.remove('expanded');
-            document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
-        } 
+        
+        function openModalByIndex(index) {
+            const data = activePageCharacters[index];
+            if (data) {
+                openModal(data);
+            }
+        }
+        
         function renderPagination(totalPages) {
             const pagDiv = document.getElementById('pagination');
             pagDiv.innerHTML = '';
@@ -324,11 +311,14 @@
                 pagDiv.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
             }
         }
+        
         function changePage(page) {
             currentPage = page;
             renderList();
         }
+        
         function openModal(data) {
+            // Mở bảng lên
             document.getElementById('charModal').style.display = 'flex';
             document.getElementById('mAvatar').src = data.avatar;
             document.getElementById('mName').innerText = data.name;
@@ -338,30 +328,49 @@
             const btnDoki = document.getElementById('mDoki');
             const btnGG = document.getElementById('mGG');
             
-            btnDoki.onclick = function(e) {
-                e.preventDefault();
-                handleClickAndOpen(data.name, data.linkDoki);
-            };
+            // Xử lý nút DokiChat
+            if (data.linkDoki !== "#") {
+                btnDoki.href = data.linkDoki;
+                btnDoki.target = "_blank"; // Trình duyệt tự động mở tab
+                btnDoki.onclick = function() {
+                    const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(data.name)}`;
+                    document.getElementById('hidden_iframe').src = clickUrl; // Bắn lệnh cộng điểm vào Sheet
+                };
+            } else {
+                btnDoki.href = "javascript:void(0)";
+                btnDoki.removeAttribute('target');
+                btnDoki.onclick = null;
+            }
             
-            btnGG.onclick = function(e) {
-                e.preventDefault();
-                handleClickAndOpen(data.name, data.linkGG);
-            };
+            // Xử lý nút ggAI
+            if (data.linkGG !== "#") {
+                btnGG.href = data.linkGG;
+                btnGG.target = "_blank"; // Trình duyệt tự động mở tab
+                btnGG.onclick = function() {
+                    const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(data.name)}`;
+                    document.getElementById('hidden_iframe').src = clickUrl; // Bắn lệnh cộng điểm vào Sheet
+                };
+            } else {
+                btnGG.href = "javascript:void(0)";
+                btnGG.removeAttribute('target');
+                btnGG.onclick = null;
+            }
             
             document.getElementById('mStory').classList.remove('expanded');
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
-        
 
         function closeModal() {
             document.getElementById('charModal').style.display = 'none';
         }
+        
         function toggleStory() {
             const story = document.getElementById('mStory');
             const btn = document.getElementById('mReadMore');
             story.classList.toggle('expanded');
             btn.innerText = story.classList.contains('expanded') ? 'Rút gọn' : 'Đọc tiếp...';
         }
+        
         function toggleMusic() {
             const bgMusic = document.getElementById('bgMusic');
             const vinyl = document.getElementById('vinyl');
@@ -376,6 +385,7 @@
                 vinyl.classList.remove('playing');
             }
         }
+        
         document.addEventListener('click', function autoPlayFirstClick() {
             if (!musicStarted) {
                 const bgMusic = document.getElementById('bgMusic');
@@ -387,11 +397,13 @@
                 }).catch(err => console.log("Chờ tương tác thêm"));
             }
         }, { once: true });
+        
         document.addEventListener('mousemove', e => {
             const cursor = document.getElementById('cursorLight');
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
+        
         document.addEventListener('click', e => {
             const ting = document.getElementById('tingSound');
             if(ting) {
@@ -405,6 +417,7 @@
             document.body.appendChild(petal);
             setTimeout(() => petal.remove(), 1000);
         });
+        
         function createSpringEffect() {
             const bg = document.getElementById('springBg');
             for(let i = 0; i < 15; i++) {
@@ -418,6 +431,7 @@
                 bg.appendChild(petal);
             }
         }
+        
         createSpringEffect();
         loadData();
     </script>
