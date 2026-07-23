@@ -187,7 +187,7 @@
 
     <script>
         // Thay link Google Apps Script mới của mày vào đây nếu cần
-        const API_URL = "https://script.google.com/macros/s/AKfycbzHGv2oTXEUY8yL1gyrVWRI2EPB3OhUiNyf2uQRv6MoEIvaGY1Pu9ZezCX7PdGhCuze4A/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbwy-QZMvqXtq2H3cEmWY7qtFqAs6bXEG0YVaNCmKR-mjVyzJ5EnIPUURD9r_fbz6NN1iQ/exec"; 
         
         const charDetails = {
             "Nguyễn Vĩnh Hiên": {
@@ -341,23 +341,20 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
 
-   async function handleClickAndOpen(name, targetUrl) {
-            const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
-            
-            // Dùng fetch với chế độ keepalive để ép trình duyệt gửi ngầm lệnh cộng điểm đi thành công 100%
-            try {
-                await fetch(clickUrl, { 
-                    method: 'GET',
-                    mode: 'no-cors', // Bỏ qua kiểm tra CORS để không bị lỗi từ chối kết nối
-                    keepalive: true  // Giữ kết nối ngầm chạy tiếp ngay cả khi đã mở tab mới
-                });
-            } catch (err) {
-                console.log("Đã gửi lệnh cộng điểm ngầm");
-            }
-            
-            // Mở tab mới của Google AI hoặc DokiChat cực kỳ mượt mà
-            window.open(targetUrl, '_blank');
-        }
+   function handleClickAndOpen(name, targetUrl) {
+    // 1. Mở link đích trước cho mượt
+    window.open(targetUrl, '_blank');
+    
+    // 2. Bắn request ngầm và in log ra F12 xem Google Sheet phản hồi gì
+    const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
+    
+    fetch(clickUrl)
+        .then(response => response.text())
+        .then(text => {
+            console.log("Kết quả từ Google Sheet trả về:", text);
+        })
+        .catch(err => console.log("Lỗi fetch:", err));
+}
 
         function closeModal() {
             document.getElementById('charModal').style.display = 'none';
