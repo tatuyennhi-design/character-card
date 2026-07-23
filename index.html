@@ -183,8 +183,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+<script>
         const API_URL = "https://script.google.com/macros/s/AKfycbx5lIarR2ObX8R5yUQ0VKElLk4bK3UAtqvOzNmBav2W_a6aoAHbO8qNHGajIYJr9FxFgw/exec"; 
         
         const charDetails = {
@@ -256,8 +255,18 @@
                 else if (realRank === 2) crown = '<span class="crown" style="color: var(--silver);">👑</span>';
                 else if (realRank === 3) crown = '<span class="crown" style="color: var(--bronze);">👑</span>';
                 
-                const cleanName = String(char.Name || "").trim();
-                const detail = charDetails[cleanName] || defaultDetail;
+                // Chuẩn hóa tên: xóa khoảng trắng thừa và chuẩn hóa Unicode (NFC) để khớp tuyệt đối
+                const rawName = char.Name ? String(char.Name) : "";
+                const cleanName = rawName.trim().normalize("NFC");
+                
+                // Tìm kiếm linh hoạt hơn (thử tìm trực tiếp hoặc chuẩn hóa)
+                let detail = defaultDetail;
+                for (let key in charDetails) {
+                    if (key.trim().normalize("NFC").toLowerCase() === cleanName.toLowerCase()) {
+                        detail = charDetails[key];
+                        break;
+                    }
+                }
 
                 listDiv.innerHTML += `
                     <div class="char-item">
@@ -390,5 +399,6 @@
         createSpringEffect();
         loadData();
     </script>
+   
 </body>
 </html>
