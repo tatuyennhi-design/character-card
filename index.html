@@ -341,19 +341,23 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
 
-        async function handleClickAndOpen(name, targetUrl) {
+       async function handleClickAndOpen(name, targetUrl) {
             const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
             
-            if (navigator.sendBeacon) {
-                navigator.sendBeacon(clickUrl);
-            } else {
-                try {
-                    await fetch(clickUrl, { keepalive: true });
-                } catch (err) {
-                    console.error("Lỗi cộng điểm:", err);
-                }
+            // Tạo một hiệu ứng nhỏ hoặc dùng fetch chờ phản hồi từ Google Sheet
+            try {
+                // Tạo một promise gọi API cộng điểm
+                const clickPromise = fetch(clickUrl, { mode: 'no-cors' });
+                
+                // Đặt timeout tối đa 400ms để không bị cảm giác bấm bị đơ, dù mạng chậm vẫn mở tab
+                const timeoutPromise = new Promise(resolve => setTimeout(resolve, 400));
+                
+                await Promise.race([clickPromise, timeoutPromise]);
+            } catch (err) {
+                console.error("Lỗi cộng điểm:", err);
             }
             
+            // Sau khi đã bắn lệnh xong thì mở tab mới mượt mà
             window.open(targetUrl, '_blank');
         }
 
