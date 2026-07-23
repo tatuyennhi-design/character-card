@@ -176,7 +176,7 @@
     <!-- Nút điều hướng -->
     <div class="nav-buttons">
         <a href="#" class="btn-nav">Quay lại Tiệm chút</a>
-        <a href="#" class="btn-nav">Góc giao lưu ước nguyện & Feedback</a>
+        <a href="#" class="btn-nav">Góc giao lưu ước nguyện</a>
     </div>
 
     <!-- Bảng xếp hạng -->
@@ -221,7 +221,7 @@
         // ==========================================
         // 1. KẾT NỐI API TỪ GOOGLE APPS SCRIPT
         // ==========================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbz1H_KezeOiwqFMNHw-k4VkS6DHNKeBOIbPwrfToePkUEDWWT2gTFUroiUmlVbprY5h_A/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxMPcpdce_x2H_vm9jhpy0lHrKb9AiOiZj8ivmNzXEsx8G0tR11YvtD8D5qyHeeso0OkA/exec"; 
         
         // ==========================================
         // 2. KHO DỮ LIỆU THÔNG TIN NHÂN VẬT
@@ -342,18 +342,23 @@
             
             document.getElementById('mStory').classList.remove('expanded');
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
-        }
 
-        function closeModal() {
-            document.getElementById('charModal').style.display = 'none';
-        }
-
-        function toggleStory() {
-            const story = document.getElementById('mStory');
-            const btn = document.getElementById('mReadMore');
-            story.classList.toggle('expanded');
-            btn.innerText = story.classList.contains('expanded') ? 'Rút gọn' : 'Đọc tiếp...';
-        }
+            // --- GỬI REQUEST CỘNG 1 LƯỢT LÊN GOOGLE SHEET ---
+            fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Tránh lỗi CORS từ Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: data.name })
+            }).then(() => {
+                console.log("Đã ghi nhận 1 lượt click cho: " + data.name);
+                // Sau khi cộng xong có thể load lại data ngầm nếu muốn cập nhật ngay số liệu hiển thị
+                // loadData(); 
+            }).catch(err => {
+                console.error("Lỗi cộng điểm:", err);
+            });
+        } 
 
         function toggleMusic() {
             const bgMusic = document.getElementById('bgMusic');
