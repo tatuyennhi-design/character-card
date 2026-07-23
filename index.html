@@ -3,373 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng Xếp Hạng - Tiệm Nhà Hy</title>
+    <title>Bảng Xếp Hạng Nhân Vật - Tiệm Chút</title>
     <style>
-        /* ==================== MÀU SẮC & CƠ BẢN ==================== */
+        /* Tông màu Vàng Chanh & Trắng */
         :root {
-            --lemon: #fff8cc;
-            --lemon-dark: #fada5e;
-            --white: #ffffff;
-            --text-main: #5c5016;
-            --text-light: #8a7b32;
+            --lemon: #FAFA33; /* Vàng chanh */
+            --lemon-light: #FFFFE0;
+            --white: #FFFFFF;
+            --text: #333333;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--lemon);
-            color: var(--text-main);
+            background: linear-gradient(135deg, var(--white) 30%, var(--lemon-light) 100%);
+            color: var(--text);
+            min-height: 100vh;
             overflow-x: hidden;
             cursor: default;
         }
 
-        * { box-sizing: border-box; transition: all 0.3s ease; }
-
-        /* ==================== THANH ĐIỀU HƯỚNG (NAVBAR) ==================== */
-        .top-nav {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            padding: 15px;
-            z-index: 1001;
-            box-shadow: 0 4px 15px rgba(250, 218, 94, 0.3);
-            backdrop-filter: blur(8px);
-            border-bottom: 2px dashed var(--lemon-dark);
+        /* Dải ánh sáng khi rê chuột */
+        .cursor-light {
+            position: fixed; width: 50px; height: 50px;
+            background: radial-gradient(circle, rgba(250,250,51,0.6) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; pointer-events: none;
+            transform: translate(-50%, -50%); z-index: 9999;
+            transition: top 0.05s ease, left 0.05s ease;
         }
 
-        .nav-btn {
-            text-decoration: none;
-            color: var(--text-main);
-            font-weight: bold;
-            padding: 10px 20px;
-            border-radius: 25px;
-            border: 2px solid var(--lemon-dark);
-            background: var(--lemon);
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        /* Nút điều hướng Top */
+        .nav-buttons {
+            display: flex; justify-content: center; gap: 20px; padding: 30px 20px;
+            flex-wrap: wrap; position: relative; z-index: 10;
+        }
+        .btn-nav {
+            background-color: var(--white);
+            border: 2px solid var(--lemon);
+            padding: 10px 25px; border-radius: 30px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            text-decoration: none; color: var(--text);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .btn-nav:hover {
+            background-color: var(--lemon); 
+            box-shadow: 0 0 15px var(--lemon);
+            transform: translateY(-2px);
         }
 
-        .nav-btn:hover, .nav-btn.active {
-            background: var(--lemon-dark);
-            color: var(--white);
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 4px 10px rgba(250, 218, 94, 0.4);
-        }
-
-        /* ==================== BANNER & SLOGAN ==================== */
-        .banner-container {
-            width: 100%;
-            height: 250px;
-            background-image: url('https://via.placeholder.com/1200x400/fada5e/ffffff?text=Thay+ảnh+Banner+vào+đây');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border-bottom: 5px solid var(--white);
-        }
-
-        .slogan {
+        /* Bảng Xếp Hạng */
+        .ranking-container {
+            max-width: 800px; margin: 0 auto 50px;
             background: rgba(255, 255, 255, 0.85);
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--lemon-dark);
-            text-shadow: 1px 1px 0px #fff;
-            border: 2px dashed var(--lemon-dark);
-        }
-
-        /* ==================== ĐĨA NHẠC ==================== */
-        .music-player {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            align-items: center;
-            background: var(--white);
-            padding: 10px;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            z-index: 1000;
-            border: 2px solid var(--lemon-dark);
+            border-radius: 20px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative; z-index: 10;
+            backdrop-filter: blur(5px);
         }
         
-        .record {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #333;
-            border: 4px solid #111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: spin 3s linear infinite;
-            animation-play-state: paused;
-            cursor: pointer;
+        .tabs {
+            display: flex; justify-content: center; gap: 30px; margin-bottom: 25px;
         }
+        .tab {
+            padding: 10px 20px; cursor: pointer; border-bottom: 3px solid transparent;
+            font-weight: bold; font-size: 1.1em; transition: 0.3s;
+        }
+        .tab.active { border-bottom: 3px solid #d4c100; color: #b3a300; }
+        .tab:hover { color: #d4c100; }
 
-        .record.playing { animation-play-state: running; }
-        .record::after {
-            content: '';
-            width: 15px; height: 15px;
-            background: var(--lemon-dark);
-            border-radius: 50%;
+        .char-item {
+            display: flex; align-items: center; padding: 12px 15px;
+            border-bottom: 1px dashed #ddd; transition: 0.2s;
+            border-radius: 10px;
         }
-        .music-info { margin-left: 10px; font-size: 14px; font-weight: bold; }
+        .char-item:hover { background-color: rgba(250, 250, 51, 0.2); }
+        
+        .rank-box { display: flex; align-items: center; width: 70px; }
+        .rank-number { font-weight: bold; font-size: 1.2em; width: 30px; text-align: center; }
+        .crown { font-size: 1.5em; margin-left: 5px; }
+        
+        .char-avatar { 
+            width: 45px; height: 45px; border-radius: 50%; 
+            object-fit: cover; border: 2px solid var(--lemon); 
+            margin-right: 15px;
+        }
+        
+        .char-name { 
+            flex-grow: 1; font-weight: bold; font-size: 1.15em; 
+            cursor: pointer; color: #333; transition: 0.2s;
+        }
+        .char-name:hover { color: #b3a300; text-decoration: underline; }
+        
+        .char-score { font-weight: bold; color: #777; background: #f9f9f9; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
+
+        /* Phân Trang */
+        .pagination { display: flex; justify-content: center; margin-top: 25px; gap: 8px; flex-wrap: wrap; }
+        .page-btn { 
+            padding: 8px 14px; border: 1px solid var(--lemon); 
+            background: var(--white); cursor: pointer; border-radius: 8px;
+            transition: 0.2s;
+        }
+        .page-btn:hover { background: var(--lemon-light); }
+        .page-btn.active { background: var(--lemon); font-weight: bold; }
+
+        /* Đĩa Than Nhạc */
+        .vinyl-container {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: repeating-radial-gradient(#111 0%, #111 5%, #222 5.5%, #222 6%);
+            border: 3px solid var(--lemon); box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            animation: spin 3s linear infinite; animation-play-state: paused; z-index: 100;
+        }
+        .vinyl-container.playing { animation-play-state: running; }
+        .vinyl-center { width: 20px; height: 20px; background: var(--lemon); border-radius: 50%; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* ==================== TABS ==================== */
-        .main-content { max-width: 800px; margin: 30px auto; padding: 0 20px; }
-        .tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
-        .tab-btn {
-            background: var(--white);
-            border: 2px solid var(--lemon-dark);
-            color: var(--text-main);
-            padding: 10px 25px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 2px 2px 0 var(--lemon-dark);
+        /* Modal Thông Tin Nhân Vật */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;
+            backdrop-filter: blur(3px);
         }
-        .tab-btn.active, .tab-btn:hover {
-            background: var(--lemon-dark);
-            color: var(--white);
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #d8bb46;
+        .modal-content {
+            background: var(--white); padding: 30px; border-radius: 20px;
+            max-width: 450px; width: 90%; text-align: center; position: relative;
+            border: 3px solid var(--lemon); box-shadow: 0 0 25px rgba(250,250,51,0.5);
         }
-
-        /* ==================== BẢNG XẾP HẠNG ==================== */
-        .ranking-list {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(250, 218, 94, 0.2);
-            border: 1px solid #fde78a;
-        }
-        .rank-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px dashed #fde78a;
-            cursor: pointer;
-        }
-        .rank-item:hover { background: #fffcf0; border-radius: 10px; }
-        .rank-item:last-child { border-bottom: none; }
-        .rank-number { font-size: 24px; font-weight: 900; color: #d1c175; width: 50px; text-align: center; }
+        .close-btn { position: absolute; top: 12px; right: 18px; font-size: 1.8em; cursor: pointer; color: #888; transition: 0.2s;}
+        .close-btn:hover { color: #f00; }
+        .modal-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--lemon); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;}
+        .story-text { max-height: 70px; overflow: hidden; transition: max-height 0.4s ease; text-align: justify; margin: 15px 0; font-size: 0.95em; line-height: 1.5; color: #555;}
+        .story-text.expanded { max-height: 600px; }
+        .read-more { color: #b3a300; cursor: pointer; font-weight: bold; font-size: 0.9em; display: inline-block; margin-bottom: 15px;}
+        .modal-links { display: flex; justify-content: center; gap: 15px; }
         
-        .top-1 .rank-number { color: #FFD700; font-size: 30px; }
-        .top-2 .rank-number { color: #C0C0C0; font-size: 28px; }
-        .top-3 .rank-number { color: #CD7F32; font-size: 26px; }
-
-        .crown { font-size: 24px; margin-right: 10px; }
-        .char-info { flex-grow: 1; margin-left: 15px; }
-        .char-name { font-size: 18px; font-weight: bold; }
-        .char-clicks { font-size: 14px; color: var(--text-light); }
-
-        .action-panel { display: none; gap: 10px; margin-top: 10px; }
-        .rank-item.open .action-panel { display: flex; }
-
-        .chat-btn {
-            background: var(--lemon-dark);
-            color: var(--white);
-            text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
+        /* Hiệu ứng Click Hoa Đào */
+        .petal-click {
+            position: fixed; width: 15px; height: 15px;
+            background: #ffb7c5; border-radius: 15px 0 15px 0;
+            pointer-events: none; z-index: 9999;
+            animation: clickFall 1s ease-out forwards;
         }
-        .chat-btn:hover { background: #e3c544; }
-
-        /* ==================== FOOTER & HIỆU ỨNG ==================== */
-        footer {
-            text-align: center; padding: 30px; margin-top: 50px;
-            background: var(--white); color: var(--text-light);
-            font-weight: bold; border-top: 2px dashed var(--lemon-dark);
+        @keyframes clickFall {
+            0% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: scale(0.3) translateY(60px) rotate(180deg); opacity: 0; }
         }
 
-        .cursor-star {
-            position: absolute; pointer-events: none; width: 10px; height: 10px;
-            background: var(--lemon-dark);
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            animation: fadeStar 0.8s ease-out forwards; z-index: 9999;
+        /* Mùa xuân - Hoa rơi nền */
+        .spring-petal {
+            position: fixed; top: -10%;
+            background: #ffc0cb; border-radius: 15px 0 15px 0;
+            pointer-events: none; z-index: 1; opacity: 0.6;
+            animation: fall linear infinite;
         }
-        .blossom {
-            position: absolute; pointer-events: none; font-size: 20px;
-            animation: fallBlossom 1s ease-out forwards; z-index: 9999;
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
         }
-
-        @keyframes fadeStar { 0% { transform: scale(1) rotate(0deg); opacity: 1; } 100% { transform: scale(0) rotate(90deg); opacity: 0; } }
-        @keyframes fallBlossom { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(50px) rotate(180deg); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <script>
-        function playTing() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(); osc.stop(ctx.currentTime + 0.3);
-            } catch (e) {}
-        }
-    </script>
+    <!-- Dải sáng rê chuột -->
+    <div class="cursor-light" id="cursorLight"></div>
 
-    <!-- THANH MENU LIÊN KẾT 3 WEB -->
-    <nav class="top-nav">
-        <a href="https://tatuyennhi-design.github.io/index.html/" class="nav-btn">🏠 Quán Ăn (Trang chủ)</a>
-        <a href="#" class="nav-btn active">🏆 Bảng Xếp Hạng</a>
-        <a href="https://tatuyennhi-design.github.io/file-C-Windows-System32-index.html/" class="nav-btn">✨ Ước Nguyện & Feedback</a>
-    </nav>
+    <!-- Background mùa xuân -->
+    <div id="springBg"></div>
 
-    <!-- BANNER -->
-    <div class="banner-container">
-        <div class="slogan">✨ Bảng Phong Thần - Tiệm Nhà Hy ✨</div>
+    <!-- Nút điều hướng -->
+    <div class="nav-buttons">
+        <a href="#" class="btn-nav">Quay lại Tiệm chút</a>
+        <a href="#" class="btn-nav">Góc giao lưu ước nguyện & Feedback</a>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
+    <!-- Bảng xếp hạng -->
+    <div class="ranking-container">
         <div class="tabs">
-            <button class="tab-btn active" onclick="changeTab(this)">Top Tuần</button>
-            <button class="tab-btn" onclick="changeTab(this)">Top Tháng</button>
-            <button class="tab-btn" onclick="changeTab(this)">Top Năm</button>
+            <div class="tab active" onclick="changeTab('ScoreWeek')">Top Tuần</div>
+            <div class="tab" onclick="changeTab('ScoreMonth')">Top Tháng</div>
+            <div class="tab" onclick="changeTab('ScoreYear')">Top Năm</div>
         </div>
-        <div class="ranking-list" id="ranking-list">
-            <h3 style="text-align: center; color: var(--text-light);">Đang tải dữ liệu lấp lánh...</h3>
-        </div>
-    </div>
-
-    <!-- ĐĨA NHẠC CHILL -->
-    <div class="music-player" onclick="toggleMusic()">
-        <div class="record" id="record"></div>
-        <div class="music-info" id="music-text">Bật nhạc lên chill 🎵</div>
-        <audio id="bg-audio" loop src="https://actions.google.com/sounds/v1/water/waves_crashing_on_rock_beach.ogg"></audio>
-    </div>
-
-    <!-- FOOTER -->
-    <footer>
-        🍋 Tiệm nhà Hy - Dép Dày Thụy Tiên 🍋 <br> Nơi các "cục cưng" được vinh danh
-    </footer>
-
-    <!-- CODE XỬ LÝ -->
-    <script>
-        const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbzyDQva5ToRsZGY5aBU_YwhjPinFBbai8usf1ZRcNjPDo8qqo5qL1zxRxwe4sryOX2Xrw/exec"; 
         
-        const charLinks = {
-            "Hắc Vô Kỵ": { doki: "https://www.dokichat.club/vi/chat/79f2b68d-ea14-417a-a2fd-66f283d3ac95", ggai: "https://aistudio.google.com/app/prompts?state=%7B%22ids%22:%5B%221TfcTSRljA3kQO8PDUcpbE623h6j5mv1H%22%5D,%22action%22:%22open%22,%22userId%22:%22100357821591707252635%22,%22resourceKeys%22:%7B%7D%7D&usp=sharing" },
+        <div id="loading" style="text-align: center; color: #888; font-style: italic;">Đang tải dữ liệu...</div>
+        <div id="rankingList"></div>
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- Đĩa than -->
+    <div class="vinyl-container" id="vinyl" onclick="toggleMusic()" title="Bật/Tắt nhạc">
+        <div class="vinyl-center"></div>
+    </div>
+    
+    <!-- AUDIO LINKS -->
+    <audio id="bgMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
+    <audio id="tingSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+
+    <!-- Modal Thông Tin -->
+    <div class="modal" id="charModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <img src="" id="mAvatar" class="modal-avatar">
+            <h2 id="mName" style="color: #b3a300; margin: 5px 0;">Tên nhân vật</h2>
+            <p style="margin: 5px 0; font-size: 0.9em; color: #888;"><strong>Thể loại:</strong> <span id="mGenre"></span></p>
+            <div class="story-text" id="mStory"></div>
+            <span class="read-more" id="mReadMore" onclick="toggleStory()">Đọc tiếp...</span>
+            <div class="modal-links">
+                <a href="#" id="mDoki" target="_blank" class="btn-nav">Dokichat</a>
+                <a href="#" id="mGG" target="_blank" class="btn-nav">ggAI</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. KẾT NỐI API TỪ GOOGLE APPS SCRIPT
+        // ==========================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbz1H_KezeOiwqFMNHw-k4VkS6DHNKeBOIbPwrfToePkUEDWWT2gTFUroiUmlVbprY5h_A/exec"; 
+        
+        // ==========================================
+        // 2. KHO DỮ LIỆU THÔNG TIN NHÂN VẬT
+        // ==========================================
+        const charDetails = {
+            "Nguyễn Vĩnh Hiên": {
+                avatar: "nvh.png",
+                genre: "Việt Nam xưa, ông giáo trẻ, 1930, miền tây",
+                story: "Năm 1933, làng Phong Mỹ đón một làn gió lạ từ Sài thành hoa lệ thổi về. Giữa những rặng dừa xanh ngắt và những cánh đồng lúa thẳng cánh cò bay của miền Tây Nam Bộ, sự xuất hiện của gã giáo trẻ Nguyễn Vĩnh Hiên với bộ đồ Tây phẳng phiu, chiếc kính gọng tròn và xấp báo Phụ nữ Tân văn đã trở thành đề tài bàn tán xôn xao nơi đầu làng cuối bãi.\n\nHiên về đây không chỉ với mảnh bằng sư phạm loại ưu hay cái lý tưởng khai dân trí cao đẹp. Trong lồng ngực gã trai 23 tuổi ấy còn mang theo một bí mật nặng nề về sự sa sút của gia đình mình năm xưa, mà kẻ đứng sau bóng tối không ai khác chính là ông Hội đồng Lê – người quyền thế nhất vùng này. Thế nhưng, số phận thật khéo trêu ngươi, khi chính ông Hội đồng lại là người gửi thư mời Hiên về dinh thự để dạy tiếng Pháp cho đứa con gái cưng duy nhất của ông – cô Út.\n\nCô út, vị tiểu thư lá ngọc cành vàng gắn liền với vẻ đẹp kiêu sa rực rỡ đầy nắng, được ông hội đồng Lê cưng chiều nuôi dưỡng, chỉ cần cô thích thì sẽ được ông hội đồng đưa vào trong tay. Hai con người, hai thế giới đối lập – một bên là gã trí thức nghèo đầy tự trọng và một bên là nàng tiểu thư lá ngọc cành vàng – sắp sửa va vào nhau trong một buổi chiều định mệnh dưới mái nhà cổ chữ Đinh trầm mặc.",
+                linkDoki: "https://www.dokichat.club/vi/chat/4280df64-dc19-49c9-8102-fd7d657af585",
+                linkGG: "https://aistudio.google.com/app/prompts?state=%7B%22ids%22:%5B%221otutEavYYlnT0zl68-BpI4KR3t_qzhuL%22%5D,%22action%22:%22open%22,%22userId%22:%22100357821591707252635%22,%22resourceKeys%22:%7B%7D%7D&usp=sharing"
+            },
+            "Lê Phan Vĩnh Uy": {
+                avatar: "lpvu.png",
+                genre: "Việt Nam xưa, miền tây, đấu đá, tranh giành",
+                story: "Cái tên Lê Phan Vĩnh Uy từ lâu đã là một bóng ma uy quyền bao trùm lên khắp cù lao Ông Chưởng. Hắn không phải hạng công tử bột sinh ra đã ngậm thìa vàng, mà là con của một người ở, đi lên từ những đắng cay, nhục nhã của kẻ bị dòng họ khinh khi. Chính cái quá khứ bị chà đạp đó đã nhào nặn nên một ông Hội đồng Vĩnh Uy điềm tĩnh đến đáng sợ, kẻ dùng sự tàn nhẫn để thâu tóm đất đai và dùng lễ giáo làm sợi dây thừng siết chặt mọi thứ trong tầm tay.\n\nĐối với hắn, đàn bà trong nhà cũng như những món đồ trưng bày để khẳng định vị thế. Bà Lớn Ngọc Diệp là cái danh giá dòng tộc, Bà Hai Mỹ Lệ là kho vàng lộ thiên. Còn mợ Ba mà hắn đã cứu về từ đống đổ nát của một danh gia tri thức bị hàm oan – hắn coi mợ là món báu vật thanh tao nhất. Hắn say mê cái trí tuệ ẩn sau đôi mắt to tròn kia, say cả cái thân hình nảy nở, trổ mã phổng phao dù tuổi đời mợ còn trẻ. Giữa một nhà toàn những kẻ diễn kịch, hắn dùng sự sủng ái dành cho mợ Ba như một cách để thử thách lòng kiên nhẫn của những người còn lại.",
+                linkDoki: "https://www.dokichat.club/vi/chat/b9288038-556d-407e-bf65-a2eb3bc18e42",
+                linkGG: "https://aistudio.google.com/app/prompts?state=%7B%22ids%22:%5B%2217lWQJt-Y0H--RjDqQU3QtTKWamrOweOi%22%5D,%22action%22:%22open%22,%22userId%22:%22100357821591707252635%22,%22resourceKeys%22:%7B%7D%7D&usp=sharing"
+            }
         };
 
-        let lastMove = 0;
-        document.addEventListener('mousemove', (e) => {
-            const now = Date.now();
-            if (now - lastMove > 50) { 
-                const star = document.createElement('div');
-                star.className = 'cursor-star';
-                star.style.left = (e.pageX - 5) + 'px';
-                star.style.top = (e.pageY - 5) + 'px';
-                document.body.appendChild(star);
-                setTimeout(() => star.remove(), 800);
-                lastMove = now;
+        const defaultDetail = {
+            avatar: "https://via.placeholder.com/150/FAFA33/333333?text=?",
+            genre: "Chưa cập nhật",
+            story: "Cốt truyện đang được cập nhật...",
+            linkDoki: "#",
+            linkGG: "#"
+        };
+
+        // ==========================================
+        // 3. LOGIC XỬ LÝ
+        // ==========================================
+        let allData = [];
+        let currentTab = 'ScoreWeek';
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        const maxItems = 50; 
+
+        async function loadData() {
+            try {
+                const response = await fetch(API_URL);
+                allData = await response.json();
+                document.getElementById('loading').style.display = 'none';
+                renderList();
+            } catch (error) {
+                document.getElementById('loading').innerText = "Lỗi tải dữ liệu. Hãy kiểm tra lại link Google Apps Script!";
             }
-        });
+        }
 
-        document.addEventListener('click', (e) => {
-            // Không tạo hoa đào nếu click vào menu để chuyển trang (tránh giật)
-            if(e.target.closest('.nav-btn')) return;
+        function changeTab(sortKey) {
+            currentTab = sortKey;
+            currentPage = 1;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderList();
+        }
 
-            playTing(); 
-            const blossom = document.createElement('div');
-            blossom.className = 'blossom';
-            blossom.innerHTML = '🌸';
-            blossom.style.left = (e.pageX - 10) + 'px';
-            blossom.style.top = (e.pageY - 10) + 'px';
-            document.body.appendChild(blossom);
-            setTimeout(() => blossom.remove(), 1000);
-        });
+        function renderList() {
+            const listDiv = document.getElementById('rankingList');
+            listDiv.innerHTML = '';
+            
+            let sortedData = [...allData].sort((a, b) => (b[currentTab] || 0) - (a[currentTab] || 0));
+            sortedData = sortedData.slice(0, maxItems);
+            
+            const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = sortedData.slice(start, end);
 
-        const audio = document.getElementById('bg-audio');
-        const record = document.getElementById('record');
-        const musicText = document.getElementById('music-text');
-        let isPlaying = false;
+            pageData.forEach((char, index) => {
+                const realRank = start + index + 1;
+                let crown = '';
+                if (realRank === 1) crown = '<span class="crown" style="color: var(--gold);">👑</span>';
+                else if (realRank === 2) crown = '<span class="crown" style="color: var(--silver);">👑</span>';
+                else if (realRank === 3) crown = '<span class="crown" style="color: var(--bronze);">👑</span>';
+
+                const detail = charDetails[char.Name] || defaultDetail;
+
+                listDiv.innerHTML += `
+                    <div class="char-item">
+                        <div class="rank-box">
+                            <span class="rank-number">${realRank}</span>
+                            ${crown}
+                        </div>
+                        <img src="${detail.avatar}" class="char-avatar" onerror="this.src='https://via.placeholder.com/150/FAFA33/333333?text=?'">
+                        <div class="char-name" onclick='openModal(${JSON.stringify({name: char.Name, ...detail})})'>${char.Name}</div>
+                        <div class="char-score">${char[currentTab] || 0} lượt</div>
+                    </div>
+                `;
+            });
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const pagDiv = document.getElementById('pagination');
+            pagDiv.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                pagDiv.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderList();
+        }
+
+        // ==========================================
+        // 4. HIỆU ỨNG & GIAO DIỆN PHỤ
+        // ==========================================
+        function openModal(data) {
+            document.getElementById('charModal').style.display = 'flex';
+            document.getElementById('mAvatar').src = data.avatar;
+            document.getElementById('mName').innerText = data.name;
+            document.getElementById('mGenre').innerText = data.genre;
+            document.getElementById('mStory').innerText = data.story;
+            document.getElementById('mDoki').href = data.linkDoki;
+            document.getElementById('mGG').href = data.linkGG;
+            
+            document.getElementById('mStory').classList.remove('expanded');
+            document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
+        }
+
+        function closeModal() {
+            document.getElementById('charModal').style.display = 'none';
+        }
+
+        function toggleStory() {
+            const story = document.getElementById('mStory');
+            const btn = document.getElementById('mReadMore');
+            story.classList.toggle('expanded');
+            btn.innerText = story.classList.contains('expanded') ? 'Rút gọn' : 'Đọc tiếp...';
+        }
 
         function toggleMusic() {
-            if (isPlaying) {
-                audio.pause(); record.classList.remove('playing'); musicText.innerText = "Bật nhạc lên chill 🎵";
+            const bgMusic = document.getElementById('bgMusic');
+            const vinyl = document.getElementById('vinyl');
+            if (bgMusic.paused) {
+                bgMusic.play();
+                vinyl.classList.add('playing');
             } else {
-                audio.play(); record.classList.add('playing'); musicText.innerText = "Đang phát nhạc 🎶";
+                bgMusic.pause();
+                vinyl.classList.remove('playing');
             }
-            isPlaying = !isPlaying;
         }
 
-        async function fetchRanking() {
-            const listContainer = document.getElementById('ranking-list');
-            if (GOOGLE_APP_URL === "YOUR_GOOGLE_SCRIPT_URL_HERE") {
-                listContainer.innerHTML = '<h3 style="text-align:center; color:red;">Nhớ dán link Google Script vào code nha mày!</h3>';
-                return;
+        document.addEventListener('mousemove', e => {
+            const cursor = document.getElementById('cursorLight');
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('click', e => {
+            const ting = document.getElementById('tingSound');
+            ting.currentTime = 0; 
+            ting.play().catch(()=>{}); 
+
+            const petal = document.createElement('div');
+            petal.className = 'petal-click';
+            petal.style.left = (e.clientX - 7) + 'px';
+            petal.style.top = (e.clientY - 7) + 'px';
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 1000);
+        });
+
+        function createSpringEffect() {
+            const bg = document.getElementById('springBg');
+            for(let i = 0; i < 15; i++) {
+                let petal = document.createElement('div');
+                petal.className = 'spring-petal';
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                petal.style.animationDelay = Math.random() * 5 + 's';
+                petal.style.width = (Math.random() * 10 + 10) + 'px';
+                petal.style.height = petal.style.width;
+                bg.appendChild(petal);
             }
-            try {
-                const response = await fetch(`${GOOGLE_APP_URL}?action=getTop`);
-                const data = await response.json();
-                listContainer.innerHTML = ''; 
-
-                if (data && data.length > 0) {
-                    const top50 = data.slice(0, 50);
-                    top50.forEach((char, index) => {
-                        let rankClass = '', crownHtml = '', rankNum = index + 1;
-                        if (index === 0) { rankClass = 'top-1'; crownHtml = '<span class="crown">👑</span>'; rankNum = '1'; }
-                        else if (index === 1) { rankClass = 'top-2'; crownHtml = '<span class="crown">👑</span>'; rankNum = '2'; }
-                        else if (index === 2) { rankClass = 'top-3'; crownHtml = '<span class="crown">👑</span>'; rankNum = '3'; }
-
-                        const linkDoki = charLinks[char.name]?.doki || "#";
-                        const linkGG = charLinks[char.name]?.ggai || "#";
-
-                        const itemHtml = `
-                            <div class="rank-item ${rankClass}" onclick="toggleLinks(this)">
-                                ${crownHtml}
-                                <div class="rank-number">${rankNum}</div>
-                                <div class="char-info">
-                                    <div class="char-name">${char.name}</div>
-                                    <div class="char-clicks">🔥 ${char.clicks} lượt sủng ái</div>
-                                    <div class="action-panel">
-                                        <a href="${linkDoki}" target="_blank" class="chat-btn">Dokichat</a>
-                                        <a href="${linkGG}" target="_blank" class="chat-btn">GGAI</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        listContainer.innerHTML += itemHtml;
-                    });
-                } else { listContainer.innerHTML = '<h3 style="text-align:center;">Chưa có dữ liệu nào 😢</h3>'; }
-            } catch (error) { listContainer.innerHTML = '<h3 style="text-align:center; color:red;">Lỗi kết nối. Thử lại sau!</h3>'; }
         }
 
-        function toggleLinks(element) {
-            document.querySelectorAll('.rank-item').forEach(el => { if (el !== element) el.classList.remove('open'); });
-            element.classList.toggle('open');
-        }
-
-        function changeTab(btn) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('ranking-list').innerHTML = '<h3 style="text-align: center; color: var(--text-light);">Đang lọc dữ liệu...</h3>';
-            setTimeout(fetchRanking, 500);
-        }
-
-        window.onload = fetchRanking;
+        createSpringEffect();
+        loadData();
     </script>
 </body>
 </html>
