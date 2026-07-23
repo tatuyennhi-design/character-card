@@ -94,6 +94,7 @@ body {
 }
 .page-btn:hover { background: var(--lemon-light); }
 .page-btn.active { background: var(--lemon); font-weight: bold; }
+
 .vinyl-container {
     position: fixed; bottom: 30px; right: 30px;
     width: 70px; height: 70px; border-radius: 50%;
@@ -115,6 +116,8 @@ body {
     background: var(--white); padding: 30px; border-radius: 20px;
     max-width: 450px; width: 90%; text-align: center; position: relative;
     border: 3px solid var(--lemon); box-shadow: 0 0 25px rgba(250,250,51,0.5);
+    max-height: 85vh; /* Giới hạn chiều cao popup */
+    overflow-y: auto; /* Bật thanh cuộn nếu chữ quá dài */
 }
 .close-btn { 
     position: absolute; top: 12px; right: 18px; font-size: 1.8em; cursor: pointer;
@@ -128,9 +131,10 @@ body {
 }
 .story-text { 
     max-height: 70px; overflow: hidden; transition: max-height 0.4s ease;
-    text-align: justify; margin: 15px 0; font-size: 0.95em; line-height: 1.5; color: #555;
+    text-align: justify; margin: 15px 0; font-size: 0.95em; line-height: 1.6; color: #555;
+    white-space: pre-wrap; /* Giữ nguyên Enter xuống dòng */
 }
-.story-text.expanded { max-height: 600px; }
+.story-text.expanded { max-height: 5000px; } /* Mở trần nhà lên siêu cao */
 .read-more { 
     color: #b3a300; cursor: pointer; font-weight: bold; font-size: 0.9em; 
     display: inline-block; margin-bottom: 15px;
@@ -164,9 +168,8 @@ body {
 <div id="springBg"></div>
 
 <div class="nav-buttons">
-    <!-- Bạn thay link của bạn vào chữ bên trong href="" nhé -->
-    <a href="https://tatuyennhi-design.github.io/index.html/" class="btn-nav">Quay lại Tiệm</a>
-    <a href="https://tatuyennhi-design.github.io/file-C-Windows-System32-index.html/" class="btn-nav">Góc giao lưu ước nguyện & Feedback</a>
+    <a href="LINK_WEB_CUA_MAY" class="btn-nav">Quay lại Tiệm</a>
+    <a href="LINK_FEEDBACK_CUA_MAY" class="btn-nav">Góc giao lưu ước nguyện & Feedback</a>
 </div>
 
 <div class="ranking-container">
@@ -203,22 +206,23 @@ body {
 </div>
 
 <script>
-// THAY LINK WEB APP CỦA MÀY VÀO ĐÂY
+// THAY LINK SCRIPT CỦA MÀY VÀO ĐÂY CHÍNH XÁC NHÉ
 const API_URL = "https://script.google.com/macros/s/AKfycbx5llarR2ObX8R5yUQ0VKEILk4bK3UAtqvOzNmBav2W_a6a0AHbO8qNHGajIYJr9FxFgw/exec";
 
 const charDetails = {
     "Nguyễn Vĩnh Hiên": {
         avatar: "nvh.png",
         genre: "Việt Nam xưa, ông giáo trẻ, 1930, miền tây",
-        story: "Năm 1933, làng Phong Mỹ đón một "làn gió lạ" từ Sài thành hoa lệ thổi về. Giữa những rặng dừa xanh ngắt và những cánh đồng lúa thẳng cánh cò bay của miền Tây Nam Bộ, sự xuất hiện của gã giáo trẻ Nguyễn Vĩnh Hiên với bộ đồ Tây phẳng phiu, chiếc kính gọng tròn và xấp báo Phụ nữ Tân văn đã trở thành đề tài bàn tán xôn xao nơi đầu làng cuối bãi. Hiên về đây không chỉ với mảnh bằng sư phạm loại ưu hay cái lý tưởng "khai dân trí" cao đẹp. Trong lồng ngực gã trai 23 tuổi ấy còn mang theo một bí mật nặng nề về sự sa sút của gia đình mình năm xưa, mà kẻ đứng sau bóng tối không ai khác chính là ông Hội đồng Lê – người quyền thế nhất vùng này. Thế nhưng, số phận thật khéo trêu ngươi, khi chính ông Hội đồng lại là người gửi thư mời Hiên về dinh thự để dạy tiếng Pháp cho đứa con gái cưng duy nhất của ông – cô Út Cô út, vị tiểu thư lá ngọc cành vàng gắn liền với vẻ đẹp kiêu sa rực rỡ đầy nắng, được ông hội đồng Lê cưng chiều nuôi dưỡng, chỉ cần cô thích thì sẽ được ông hội đồng đưa vào trong tay. Hai con người, hai thế giới đối lập – một bên là gã trí thức nghèo đầy tự trọng và một bên là nàng tiểu thư lá ngọc cành vàng – sắp sửa va vào nhau trong một buổi chiều định mệnh dưới mái nhà cổ chữ Đinh trầm mặc.
-",
+        story: `Năm 1933, làng Phong Mỹ đón một làn gió lạ từ Sài thành hoa lệ thổi về...
+
+(Mày có thể gõ dài thêm và ấn Enter xuống dòng thoải mái tại đây vì tao đã đổi sang dùng dấu nháy ngược rồi nhé)`,
         linkDoki: "https://www.dokichat.club/vi/chat/4280df64-dc19-49c9-8102-fd7d657af585",
         linkGG: "https://aistudio.google.com/app/prompts?state=..."
     },
     "Lê Phan Vĩnh Uy": {
         avatar: "Ipvu.png",
         genre: "Việt Nam xưa, miền tây, đấu đá, tranh giành",
-        story: "Cái tên Lê Phan Vĩnh Uy từ lâu đã là một bóng ma uy quyền bao trùm lên khắp cù lao Ông Chưởng. Hắn không phải hạng công tử bột sinh ra đã ngậm thìa vàng, mà là con của một người ở, đi lên từ những đắng cay, nhục nhã của kẻ bị dòng họ khinh khi. Chính cái quá khứ bị chà đạp đó đã nhào nặn nên một ông Hội đồng Vĩnh Uy điềm tĩnh đến đáng sợ, kẻ dùng sự tàn nhẫn để thâu tóm đất đai và dùng lễ giáo làm sợi dây thừng siết chặt mọi thứ trong tầm tay. Đối với hắn, đàn bà trong nhà cũng như những món đồ trưng bày để khẳng định vị thế. Bà Lớn Ngọc Diệp là cái danh giá dòng tộc, Bà Hai Mỹ Lệ là kho vàng lộ thiên. Còn mợ Ba mà hắn đã "cứu" về từ đống đổ nát của một danh gia tri thức bị hàm oan – hắn coi mợ là món báu vật thanh tao nhất. Hắn say mê cái trí tuệ ẩn sau đôi mắt to tròn kia, say cả cái thân hình nảy nở, trổ mã phổng phao dù tuổi đời mợ còn trẻ. Giữa một nhà toàn những kẻ diễn kịch, hắn dùng sự sủng ái dành cho mợ Ba như một cách để thử thách lòng kiên nhẫn của những người còn lại.",
+        story: `Cái tên Lê Phan Vĩnh Uy từ lâu đã là một bóng ma uy quyền... Dưới trướng gia chủ họ Lê, những xung đột ngầm và tranh đoạt vị thế ngày càng trở nên gay gắt. Liệu những mưu đồ này sẽ dẫn gia tộc đi về đâu?`,
         linkDoki: "https://www.dokichat.club/vi/chat/b9288038-556d-407e-bf65-a2eb3bc18e42",
         linkGG: "https://aistudio.google.com/app/prompts?state=..."
     }
@@ -241,11 +245,13 @@ const maxItems = 50;
 async function loadData() {
     try {
         const response = await fetch(API_URL);
+        if (!response.ok) throw new Error("Lỗi fetch API");
         allData = await response.json();
         document.getElementById('loading').style.display = 'none';
         renderList();
     } catch (error) {
-        document.getElementById('loading').innerText = "Lỗi tải dữ liệu!";
+        console.error("Lỗi:", error);
+        document.getElementById('loading').innerHTML = '<span style="color:red;">Lỗi tải dữ liệu Google Sheet! Hãy kiểm tra lại API_URL.</span>';
     }
 }
 
@@ -310,13 +316,11 @@ function openModal(data) {
     document.getElementById('mGenre').innerText = data.genre;
     document.getElementById('mStory').innerText = data.story;
     
-    // Gắn link đồng thời gán sự kiện cộng điểm khi bấm vào nút Dokichat hoặc ggAI
     const btnDoki = document.getElementById('mDoki');
     const btnGG = document.getElementById('mGG');
     btnDoki.href = data.linkDoki;
     btnGG.href = data.linkGG;
     
-    // Xóa sự kiện cũ (nếu có) để tránh bị cộng dồn nhiều lần
     btnDoki.onclick = function() { registerClick(data.name); };
     btnGG.onclick = function() { registerClick(data.name); }; 
     
@@ -324,12 +328,11 @@ function openModal(data) {
     document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
 }
 
-// Hàm gọi ngầm cộng điểm lên Google Sheet
 async function registerClick(name) {
     try {
         await fetch(`${API_URL}?action=click&name=${encodeURIComponent(name)}`);
         console.log("Đã cộng 1 lượt cho: " + name);
-        loadData(); // Tải lại dữ liệu ngầm để cập nhật số lượt mới lên web
+        loadData(); 
     } catch (err) {
         console.error("Lỗi cộng điểm:", err);
     }
