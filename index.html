@@ -184,26 +184,6 @@ div class="nav-buttons">
     </div>
     
     <audio id="bgMusic" loop src="nhac.mp3"></audio>
-    // Hợp âm 3 nốt thủy tinh: C6 (1046Hz), E6 (1318Hz), G6 (1567Hz)
-      const freqs = [1046.50, 1318.51, 1567.98];
-      const now = audioCtx.currentTime;
-      freqs.forEach((freq, index) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + index * 0.03); // Đánh lệch nhẹ 0.03s tạo hiệu ứng gảy chuông
-        // Âm lượng ngân vang dài 1.2s mềm mại
-        gain.gain.setValueAtTime(0.08, now + index * 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.03 + 1.2);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now + index * 0.03);
-        osc.stop(now + index * 0.03 + 1.2);
-      });
-    } catch (e) {
-      // Bỏ qua lỗi tự động phát âm thanh
-    }
-  }
 
     <div class="modal" id="charModal">
         <div class="modal-content">
