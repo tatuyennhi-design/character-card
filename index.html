@@ -5,155 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng Xếp Hạng Nhân Vật - Tiệm Chút</title>
     <style>
-        :root {
-            --lemon: #FAFA33;
-            --lemon-light: #FFFFE0;
-            --white: #FFFFFF;
-            --text: #333333;
-            --gold: #FFD700;
-            --silver: #C0C0C0;
-            --bronze: #CD7F32;
-        }
+    :root {
+        --lemon: #F4D03F;       /* Vàng chanh tươi sáng, sang trọng */
+        --lemon-light: #FCF3CF; /* Vàng kem nhạt làm nền dịu mắt */
+        --lemon-dark: #D4AC0D;  /* Vàng đậm cho viền/hover */
+        --white: #FFFFFF;
+        --text: #2C3E50;        /* Chữ tối màu dễ đọc */
+        --gold: #F1C40F;
+        --silver: #95A5A6;
+        --bronze: #D35400;
+    }
 
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--white) 30%, var(--lemon-light) 100%);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            cursor: default;
-        }
+    body {
+        margin: 0; padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #FFFDF0 0%, var(--lemon-light) 100%);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+        cursor: default;
+    }
 
-        .cursor-light {
-            position: fixed; width: 50px; height: 50px;
-            background: radial-gradient(circle, rgba(250,250,51,0.6) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%; pointer-events: none;
-            transform: translate(-50%, -50%); z-index: 9999;
-            transition: top 0.05s ease, left 0.05s ease;
-        }
+    .cursor-light {
+        position: fixed; width: 50px; height: 50px;
+        background: radial-gradient(circle, rgba(244,208,63,0.5) 0%, rgba(255,255,255,0) 70%);
+        border-radius: 50%; pointer-events: none;
+        transform: translate(-50%, -50%); z-index: 9999;
+        transition: top 0.05s ease, left 0.05s ease;
+    }
 
-        .nav-buttons {
-            display: flex; justify-content: center; gap: 20px; padding: 30px 20px;
-            flex-wrap: wrap; position: relative; z-index: 10;
-        }
-        .btn-nav {
-            background-color: var(--white);
-            border: 2px solid var(--lemon);
-            padding: 10px 25px; border-radius: 30px;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            text-decoration: none; color: var(--text);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .btn-nav:hover {
-            background-color: var(--lemon); 
-            box-shadow: 0 0 15px var(--lemon);
-            transform: translateY(-2px);
-        }
+    .nav-buttons {
+        display: flex; justify-content: center; gap: 20px; padding: 30px 20px;
+        flex-wrap: wrap; position: relative; z-index: 10;
+    }
+    .btn-nav {
+        background-color: var(--white);
+        border: 2px solid var(--lemon);
+        padding: 10px 25px; border-radius: 30px;
+        font-weight: bold; cursor: pointer; transition: 0.3s;
+        text-decoration: none; color: var(--text);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .btn-nav:hover {
+        background-color: var(--lemon); 
+        border-color: var(--lemon-dark);
+        box-shadow: 0 0 15px rgba(244,208,63,0.6);
+        transform: translateY(-2px);
+    }
 
-        .ranking-container {
-            max-width: 800px; margin: 0 auto 50px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 20px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            position: relative; z-index: 10;
-            backdrop-filter: blur(5px);
-        }
-        
-        .tabs {
-            display: flex; justify-content: center; gap: 30px; margin-bottom: 25px;
-        }
-        .tab {
-            padding: 10px 20px; cursor: pointer; border-bottom: 3px solid transparent;
-            font-weight: bold; font-size: 1.1em; transition: 0.3s;
-        }
-        .tab.active { border-bottom: 3px solid #d4c100; color: #b3a300; }
-        .tab:hover { color: #d4c100; }
+    .ranking-container {
+        max-width: 800px; margin: 0 auto 50px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px; padding: 25px;
+        box-shadow: 0 10px 30px rgba(212,172,13,0.15);
+        position: relative; z-index: 10;
+        backdrop-filter: blur(5px);
+        border: 2px solid rgba(244,208,63,0.3);
+    }
+    
+    .tabs {
+        display: flex; justify-content: center; gap: 30px; margin-bottom: 25px;
+    }
+    .tab {
+        padding: 10px 20px; cursor: pointer; border-bottom: 3px solid transparent;
+        font-weight: bold; font-size: 1.1em; transition: 0.3s; color: #7F8C8D;
+    }
+    .tab.active { border-bottom: 3px solid var(--lemon-dark); color: var(--lemon-dark); }
+    .tab:hover { color: var(--lemon-dark); }
 
-        .char-item {
-            display: flex; align-items: center; padding: 12px 15px;
-            border-bottom: 1px dashed #ddd; transition: 0.2s;
-            border-radius: 10px;
-        }
-        .char-item:hover { background-color: rgba(250, 250, 51, 0.2); }
-        
-        .rank-box { display: flex; align-items: center; width: 70px; }
-        .rank-number { font-weight: bold; font-size: 1.2em; width: 30px; text-align: center; }
-        .crown { font-size: 1.5em; margin-left: 5px; }
-        
-        .char-avatar { 
-            width: 45px; height: 45px; border-radius: 50%; 
-            object-fit: cover; border: 2px solid var(--lemon); 
-            margin-right: 15px;
-        }
-        
-        .char-name { 
-            flex-grow: 1; font-weight: bold; font-size: 1.15em; 
-            cursor: pointer; color: #333; transition: 0.2s;
-        }
-        .char-name:hover { color: #b3a300; text-decoration: underline; }
-        
-        .char-score { font-weight: bold; color: #777; background: #f9f9f9; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
+    .char-item {
+        display: flex; align-items: center; padding: 12px 15px;
+        border-bottom: 1px dashed #FAD7A0; transition: 0.2s;
+        border-radius: 10px;
+    }
+    .char-item:hover { background-color: rgba(244,208,63,0.15); }
+    
+    .rank-box { display: flex; align-items: center; width: 70px; }
+    .rank-number { font-weight: bold; font-size: 1.2em; width: 30px; text-align: center; }
+    .crown { font-size: 1.5em; margin-left: 5px; }
+    
+    .char-avatar { 
+        width: 45px; height: 45px; border-radius: 50%; 
+        object-fit: cover; border: 2px solid var(--lemon); 
+        margin-right: 15px;
+    }
+    
+    .char-name { 
+        flex-grow: 1; font-weight: bold; font-size: 1.15em; 
+        cursor: pointer; color: var(--text); transition: 0.2s;
+    }
+    .char-name:hover { color: var(--lemon-dark); text-decoration: underline; }
+    
+    .char-score { font-weight: bold; color: #5D6D7E; background: #FEF9E7; padding: 5px 12px; border-radius: 15px; font-size: 0.9em; border: 1px solid #FCF3CF; }
 
-        .pagination { display: flex; justify-content: center; margin-top: 25px; gap: 8px; flex-wrap: wrap; }
-        .page-btn { 
-            padding: 8px 14px; border: 1px solid var(--lemon); 
-            background: var(--white); cursor: pointer; border-radius: 8px;
-            transition: 0.2s;
-        }
-        .page-btn:hover { background: var(--lemon-light); }
-        .page-btn.active { background: var(--lemon); font-weight: bold; }
+    .pagination { display: flex; justify-content: center; margin-top: 25px; gap: 8px; flex-wrap: wrap; }
+    .page-btn { 
+        padding: 8px 14px; border: 1px solid var(--lemon); 
+        background: var(--white); cursor: pointer; border-radius: 8px;
+        transition: 0.2s; color: var(--text);
+    }
+    .page-btn:hover { background: var(--lemon-light); }
+    .page-btn.active { background: var(--lemon); font-weight: bold; border-color: var(--lemon-dark); }
 
-        .vinyl-container {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 70px; height: 70px; border-radius: 50%;
-            background: repeating-radial-gradient(#111 0%, #111 5%, #222 5.5%, #222 6%);
-            border: 3px solid var(--lemon); box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            display: flex; justify-content: center; align-items: center; cursor: pointer;
-            animation: spin 3s linear infinite; animation-play-state: paused; z-index: 100;
-        }
-        .vinyl-container.playing { animation-play-state: running; }
-        .vinyl-center { width: 20px; height: 20px; background: var(--lemon); border-radius: 50%; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+    .vinyl-container {
+        position: fixed; bottom: 30px; right: 30px;
+        width: 70px; height: 70px; border-radius: 50%;
+        background: repeating-radial-gradient(#111 0%, #111 5%, #222 5.5%, #222 6%);
+        border: 3px solid var(--lemon); box-shadow: 0 0 15px rgba(244,208,63,0.4);
+        display: flex; justify-content: center; align-items: center; cursor: pointer;
+        animation: spin 3s linear infinite; animation-play-state: paused; z-index: 100;
+    }
+    .vinyl-container.playing { animation-play-state: running; }
+    .vinyl-center { width: 20px; height: 20px; background: var(--lemon); border-radius: 50%; box-shadow: inset 0 0 3px rgba(0,0,0,0.5); }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;
-            backdrop-filter: blur(3px);
-        }
-        .modal-content {
-            background: var(--white); padding: 30px; border-radius: 20px;
-            max-width: 450px; width: 90%; text-align: center; position: relative;
-            border: 3px solid var(--lemon); box-shadow: 0 0 25px rgba(250,250,51,0.5);
-        }
-        .close-btn { position: absolute; top: 12px; right: 18px; font-size: 1.8em; cursor: pointer; color: #888; transition: 0.2s;}
-        .close-btn:hover { color: #f00; }
-        .modal-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--lemon); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px;}
-        .story-text { max-height: 70px; overflow: hidden; transition: max-height 0.4s ease; text-align: justify; margin: 15px 0; font-size: 0.95em; line-height: 1.5; color: #555;}
-        .story-text.expanded { max-height: 600px; }
-        .read-more { color: #b3a300; cursor: pointer; font-weight: bold; font-size: 0.9em; display: inline-block; margin-bottom: 15px;}
-        .modal-links { display: flex; justify-content: center; gap: 15px; }
-        
-        .petal-click {
-            position: fixed; width: 15px; height: 15px;
-            background: #ffb7c5; border-radius: 15px 0 15px 0;
-            pointer-events: none; z-index: 9999;
-            animation: clickFall 1s ease-out forwards;
-        }
-        @keyframes clickFall {
-            0% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: scale(0.3) translateY(60px) rotate(180deg); opacity: 0; }
-        }
+    .modal {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
+        backdrop-filter: blur(3px);
+    }
+    .modal-content {
+        background: var(--white); padding: 30px; border-radius: 20px;
+        max-width: 450px; width: 90%; text-align: center; position: relative;
+        border: 3px solid var(--lemon); box-shadow: 0 0 25px rgba(244,208,63,0.4);
+    }
+    .close-btn { position: absolute; top: 12px; right: 18px; font-size: 1.8em; cursor: pointer; color: #888; transition: 0.2s;}
+    .close-btn:hover { color: #e74c3c; }
+    .modal-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--lemon); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px; object-fit: cover;}
+    .story-text { max-height: 70px; overflow: hidden; transition: max-height 0.4s ease; text-align: justify; margin: 15px 0; font-size: 0.95em; line-height: 1.5; color: #555;}
+    .story-text.expanded { max-height: 600px; }
+    .read-more { color: var(--lemon-dark); cursor: pointer; font-weight: bold; font-size: 0.9em; display: inline-block; margin-bottom: 15px;}
+    .modal-links { display: flex; justify-content: center; gap: 15px; }
+    
+    .petal-click {
+        position: fixed; width: 15px; height: 15px;
+        background: #F9E79F; border-radius: 15px 0 15px 0;
+        pointer-events: none; z-index: 9999;
+        animation: clickFall 1s ease-out forwards;
+    }
+    @keyframes clickFall {
+        0% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: scale(0.3) translateY(60px) rotate(180deg); opacity: 0; }
+    }
 
-        .spring-petal {
-            position: fixed; top: -10%;
-            background: #ffc0cb; border-radius: 15px 0 15px 0;
-            pointer-events: none; z-index: 1; opacity: 0.6;
-            animation: fall linear infinite;
-        }
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); }
-        }
+    .spring-petal {
+        position: fixed; top: -10%;
+        background: rgba(244, 208, 63, 0.4); border-radius: 15px 0 15px 0;
+        pointer-events: none; z-index: 1; opacity: 0.6;
+        animation: fall linear infinite;
+    }
+    @keyframes fall {
+        to { transform: translateY(110vh) rotate(360deg); }
+    }
+    </style>
     </style>
 </head>
 <body>
@@ -162,8 +166,8 @@
     <div id="springBg"></div>
 
     <div class="nav-buttons">
-    <a href="https://tatuyennhi-design.github.io/index.html/" class="btn-nav">Quay lại Tiệm</a>
-    <a href="https://tatuyennhi-design.github.io/file-C-Windows-System32-index.html/" class="btn-nav">Góc giao lưu ước nguyện & Feedback</a>
+    <a href="https://tatuyennhi-design.github.io/index.html/" class="btn-nav">Quay về Tiệm chính</a>
+    <a href="https://tatuyennhi-design.github.io/file-C-Windows-System32-index.html/" class="btn-nav">Góc Ước Nguyện Giao Lưu & Feedback</a>
 </div>
 
     <div class="ranking-container">
@@ -344,18 +348,39 @@
             story.classList.toggle('expanded');
             btn.innerText = story.classList.contains('expanded') ? 'Rút gọn' : 'Đọc tiếp...';
         }
+<script>
+    let musicStarted = false;
 
-        function toggleMusic() {
+    function toggleMusic() {
+        const bgMusic = document.getElementById('bgMusic');
+        const vinyl = document.getElementById('vinyl');
+        
+        if (bgMusic.paused) {
+            bgMusic.play().then(() => {
+                vinyl.classList.add('playing');
+                musicStarted = true;
+            }).catch(err => console.log("Trình duyệt chặn phát nhạc:", err));
+        } else {
+            bgMusic.pause();
+            vinyl.classList.remove('playing');
+        }
+    }
+
+    // Mẹo: Cứ ai vừa bấm click đầu tiên bất kỳ đâu trên trang là nhạc tự động chạy luôn
+    document.addEventListener('click', function autoPlayFirstClick() {
+        if (!musicStarted) {
             const bgMusic = document.getElementById('bgMusic');
             const vinyl = document.getElementById('vinyl');
-            if (bgMusic.paused) {
-                bgMusic.play();
+            
+            bgMusic.play().then(() => {
                 vinyl.classList.add('playing');
-            } else {
-                bgMusic.pause();
-                vinyl.classList.remove('playing');
-            }
+                musicStarted = true;
+                // Sau khi kích hoạt thành công lần đầu thì gỡ sự kiện này đi
+                document.removeEventListener('click', autoPlayFirstClick);
+            }).catch(err => console.log("Chờ tương tác thêm"));
         }
+    }, { once: true });
+</script>
 
         document.addEventListener('mousemove', e => {
             const cursor = document.getElementById('cursorLight');
