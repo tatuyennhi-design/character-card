@@ -341,14 +341,21 @@
             document.getElementById('mReadMore').innerText = 'Đọc tiếp...';
         }
 
-      function handleClickAndOpen(name, targetUrl) {
+     function handleClickAndOpen(name, targetUrl) {
             const clickUrl = `${API_URL}?action=click&name=${encodeURIComponent(name)}`;
             
-            // Dùng trick tạo Image ẩn để ép trình duyệt gọi ngầm lên Google Script, không bao giờ sợ bị hủy khi mở tab mới
-            const img = new Image();
-            img.src = clickUrl;
+            // Dùng form ẩn bắn qua iframe để lừa trình duyệt, giúp gửi lệnh cộng điểm đi mượt mà 
+            // mà không bị chặn CORS hay bị hủy khi mở tab mới
+            let form = document.createElement('form');
+            form.action = clickUrl;
+            form.method = 'GET';
+            form.target = 'hidden_iframe'; 
             
-            // Mở tab mới ngay lập tức một cách mượt mà
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            // Mở trang DokiChat hoặc GG AI ngay lập tức
             window.open(targetUrl, '_blank');
         }
 
@@ -427,5 +434,6 @@
         createSpringEffect();
         loadData();
     </script>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 </body>
 </html>
