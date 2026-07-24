@@ -425,6 +425,27 @@
         loadData();
     </script>
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+// Thay đường link bên dưới bằng URL Web App Google Apps Script của bạn
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbwV4MNMKsG2czMZHzfY9KSu3FYGRbA6huOLWW5nXqNM1rH_xJzBPlhu2qj1znv-KXrzfg/exec'; 
+
+fetch(scriptUrl, {
+  method: 'GET',       // Hoặc 'POST' tùy thuộc vào hàm doGet hay doPost bạn dùng trong Apps Script
+  redirect: 'follow'   // BẮT BUỘC: Lệnh này giúp trình duyệt theo dõi luồng chuyển hướng của Google
+})
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Lỗi khi fetch dữ liệu: ' + response.statusText);
+    }
+    return response.json(); // Nếu Apps Script trả về JSON. Đổi thành .text() nếu trả về dạng text/html
+  })
+  .then(data => {
+    console.log('Lấy dữ liệu thành công:', data);
+    // Viết code xử lý giao diện (gắn dữ liệu vào card) của bạn ở đây
+  })
+  .catch(error => {
+    console.error('Đã xảy ra lỗi:', error);
+  });
+    
 </body>
 </html>
 
