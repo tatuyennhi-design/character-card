@@ -423,12 +423,8 @@
 
         createSpringEffect();
         loadData();
-    </script>
-    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-// Thay đường link bên dưới bằng URL Web App Google Apps Script của bạn
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbwV4MNMKsG2czMZHzfY9KSu3FYGRbA6huOLWW5nXqNM1rH_xJzBPlhu2qj1znv-KXrzfg/exec'; 
 
-fetch(scriptUrl, {
+        fetch(scriptUrl, {
   method: 'GET',       // Hoặc 'POST' tùy thuộc vào hàm doGet hay doPost bạn dùng trong Apps Script
   redirect: 'follow'   // BẮT BUỘC: Lệnh này giúp trình duyệt theo dõi luồng chuyển hướng của Google
 })
@@ -445,7 +441,8 @@ fetch(scriptUrl, {
   .catch(error => {
     console.error('Đã xảy ra lỗi:', error);
   });
-    
+    </script>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe  
 </body>
 </html>
 
